@@ -13,7 +13,7 @@ export interface ItemModel {
   description: string
   score: number
   completed: boolean
-  deadline: Date
+  deadline: string
   userId: string
   categoryId: number
   category: CategoryModel

@@ -8,11 +8,14 @@ export const auth = betterAuth({
   trustedOrigins: ['http://localhost:3000'],
 })
 
-export const authGuard = new Elysia({ name: 'auth-guard' }).derive(
-  { as: 'scoped' },
-  async ({ request, error }) => {
+export const authGuard = new Elysia({ name: 'auth-guard' })
+  .derive({ as: 'scoped' }, async ({ request }) => {
     const session = await auth.api.getSession({ headers: request.headers })
-    if (!session) return error(401, 'Unauthorized')
-    return { userId: session.user.id }
-  }
-)
+    return { userId: session?.user.id }
+  })
+  .onBeforeHandle({ as: 'scoped' }, ({ userId, set }) => {
+    if (!userId) {
+      set.status = 401
+      return 'Unauthorized'
+    }
+  })

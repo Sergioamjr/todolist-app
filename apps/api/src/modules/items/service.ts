@@ -1,46 +1,32 @@
-import { AppDataSource } from '../../db'
-import { Item } from '../../entities'
+import { TypeORMItemRepository, type IItemRepository } from './repository'
 import type { ItemModel } from '../../entities'
 
-const repo = () => AppDataSource.getRepository(Item)
+export class ItemService {
+  constructor(private readonly repo: IItemRepository = new TypeORMItemRepository()) {}
 
-export abstract class ItemService {
-  static async findAll(userId: string, categoryId?: number) {
-    const qb = repo()
-      .createQueryBuilder('item')
-      .where('item.userId = :userId', { userId })
-
-    if (categoryId !== undefined) {
-      qb.andWhere('item.categoryId = :categoryId', { categoryId })
-    }
-
-    return qb.getMany()
+  findAll(userId: string, categoryId?: number) {
+    return this.repo.findAll(userId, categoryId)
   }
 
-  static async findOne(id: number, userId: string) {
-    return repo().findOneBy({ id, userId })
+  findOne(id: number, userId: string) {
+    return this.repo.findOne(id, userId)
   }
 
-  static async create(userId: string, data: Partial<ItemModel>) {
-    return repo().save({ ...data, userId })
+  create(userId: string, data: Partial<ItemModel>) {
+    return this.repo.create(userId, data)
   }
 
-  static async update(id: number, userId: string, data: Partial<ItemModel>) {
-    const item = await repo().findOneBy({ id, userId })
-    if (!item) return null
-    return repo().save({ ...item, ...data })
+  update(id: number, userId: string, data: Partial<ItemModel>) {
+    return this.repo.update(id, userId, data)
   }
 
-  static async remove(id: number, userId: string) {
-    const item = await repo().findOneBy({ id, userId })
-    if (!item) return null
-    await repo().remove(item)
-    return { deleted: true }
+  remove(id: number, userId: string) {
+    return this.repo.remove(id, userId)
   }
 
-  static async toggle(id: number, userId: string, completed: boolean) {
-    const item = await repo().findOneBy({ id, userId })
-    if (!item) return null
-    return repo().save({ ...item, completed })
+  toggle(id: number, userId: string, completed: boolean) {
+    return this.repo.toggle(id, userId, completed)
   }
 }
+
+export const itemService = new ItemService()

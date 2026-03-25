@@ -1,26 +1,30 @@
-import Elysia from 'elysia'
-import { authGuard } from '../auth'
-import { ItemService } from './service'
+import Elysia, { NotFoundError } from 'elysia'
+import { itemService } from './service'
 import { ItemBody, ItemParams, ItemQuery, ToggleBody } from './model'
 
+const orNotFound = <T>(r: T | null) => {
+  if (!r) throw new NotFoundError()
+  return r
+}
+
 export const itemsModule = new Elysia({ prefix: '/items' })
-  .use(authGuard)
-  .get('/', ({ userId, query }) => ItemService.findAll(userId, query.categoryId), {
+  .derive(() => ({ userId: 'user-dev' }))
+  .get('/', ({ userId, query }) => itemService.findAll(userId, query.categoryId), {
     query: ItemQuery,
   })
-  .post('/', ({ userId, body }) => ItemService.create(userId, body), {
+  .post('/', ({ userId, body }) => itemService.create(userId, body), {
     body: ItemBody,
   })
-  .put('/:id', ({ userId, params, body }) => ItemService.update(params.id, userId, body), {
+  .put('/:id', ({ userId, params, body }) => itemService.update(params.id, userId, body), {
     params: ItemParams,
     body: ItemBody,
   })
-  .delete('/:id', ({ userId, params, error }) =>
-    ItemService.remove(params.id, userId).then(r => r ?? error(404, 'Not found')), {
+  .delete('/:id', ({ userId, params }) =>
+    itemService.remove(params.id, userId).then(orNotFound), {
     params: ItemParams,
   })
   .patch('/:id/toggle', ({ userId, params, body }) =>
-    ItemService.toggle(params.id, userId, body.completed).then(r => r ?? error(404, 'Not found')), {
+    itemService.toggle(params.id, userId, body.completed).then(orNotFound), {
     params: ItemParams,
     body: ToggleBody,
   })

@@ -35,7 +35,7 @@ function createSchema() {
       completed   INTEGER NOT NULL DEFAULT 0,
       deadline    TEXT,
       userId      TEXT    NOT NULL,
-      categoryId  INTEGER REFERENCES category(id) ON DELETE SET NULL,
+      categoryId  INTEGER,
       createdAt   DATETIME DEFAULT (datetime('now'))
     )
   `)
