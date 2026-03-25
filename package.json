@@ -1,0 +1,11 @@
+{
+  "name": "gamified-todo",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "concurrently \"bun run --cwd apps/api dev\" \"bun run --cwd apps/web dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
