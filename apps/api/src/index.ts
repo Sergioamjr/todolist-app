@@ -2,7 +2,7 @@ import { Elysia } from 'elysia'
 import { swagger } from '@elysiajs/swagger'
 import { cors } from '@elysiajs/cors'
 import { initDb } from './db'
-import { auth } from './modules/auth'
+// import { auth } from './modules/auth'
 import { itemsModule } from './modules/items'
 import { categoriesModule } from './modules/categories'
 

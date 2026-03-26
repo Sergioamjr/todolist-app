@@ -6,6 +6,11 @@
       "sourceType": "github",
       "computedHash": "55268e69a2c766ed67e56a0db57544f60cc52dba0c7f024a974baf965e525e1b"
     },
+    "eslint-prettier-config": {
+      "source": "patricio0312rev/skills",
+      "sourceType": "github",
+      "computedHash": "dd1365afc6c06f6c8555d0624669e70c6873057da70a92b045e948329dc1b906"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
