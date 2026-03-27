@@ -2,8 +2,18 @@ import { db, AppDataSource } from '../../db'
 import { Item } from '../../entities'
 import type { ItemModel } from '../../entities'
 
+export interface ItemFilters {
+  categoryId?: number
+  completed?: boolean
+  score?: number
+  name?: string
+  deadline?: string
+  createdAtFrom?: string
+  createdAtTo?: string
+}
+
 export interface IItemRepository {
-  findAll(userId: string, categoryId?: number): Promise<ItemModel[]>
+  findAll(userId: string, filters?: ItemFilters): Promise<ItemModel[]>
   findOne(id: number, userId: string): Promise<ItemModel | null>
   create(userId: string, data: Partial<ItemModel>): Promise<ItemModel>
   update(id: number, userId: string, data: Partial<ItemModel>): Promise<ItemModel | null>
@@ -16,15 +26,50 @@ export class TypeORMItemRepository implements IItemRepository {
     return AppDataSource.getRepository(Item)
   }
 
-  async findAll(_userId: string, categoryId?: number) {
-    if (categoryId !== undefined) {
-      return db.query('SELECT * FROM item WHERE categoryId = ?').all(categoryId) as ItemModel[]
+  async findAll(userId: string, filters: ItemFilters = {}) {
+    const conditions: string[] = ['userId = ?']
+    const params: unknown[] = [userId]
+
+    if (filters.categoryId !== undefined) {
+      conditions.push('categoryId = ?')
+      params.push(filters.categoryId)
     }
-    return db.query('SELECT * FROM item').all() as ItemModel[]
+    if (filters.completed !== undefined) {
+      conditions.push('completed = ?')
+      params.push(filters.completed ? 1 : 0)
+    }
+    if (filters.score !== undefined) {
+      conditions.push('score = ?')
+      params.push(filters.score)
+    }
+    if (filters.name !== undefined) {
+      conditions.push('name LIKE ?')
+      params.push(`%${filters.name}%`)
+    }
+    if (filters.deadline !== undefined) {
+      conditions.push('deadline = ?')
+      params.push(filters.deadline)
+    }
+
+    if (filters.createdAtFrom !== undefined) {
+      conditions.push('createdAt >= ?')
+      params.push(filters.createdAtFrom)
+    }
+    // if (filters.createdAtTo !== undefined) {
+    //   conditions.push('createdAt <= ?')
+    //   params.push(filters.createdAtTo)
+    // }
+
+    const where = conditions.join(' AND ')
+    return db
+      .query(`SELECT * FROM item WHERE ${where}`)
+      .all(...(params as unknown[] as any)) as ItemModel[]
   }
 
   async findOne(id: number, userId: string) {
-    return db.query('SELECT * FROM item WHERE id = ? AND userId = ?').get(id, userId) as ItemModel | null
+    return db
+      .query('SELECT * FROM item WHERE id = ? AND userId = ?')
+      .get(id, userId) as ItemModel | null
   }
 
   async create(userId: string, data: Partial<ItemModel>) {
@@ -34,7 +79,8 @@ export class TypeORMItemRepository implements IItemRepository {
   async update(id: number, userId: string, data: Partial<ItemModel>) {
     const item = await this.findOne(id, userId)
     if (!item) return null
-    return this.repo.save({ ...item, ...data })
+    await this.repo.update({ id }, { ...item, ...data })
+    return this.findOne(id, userId)
   }
 
   async remove(id: number, userId: string) {
@@ -47,6 +93,7 @@ export class TypeORMItemRepository implements IItemRepository {
   async toggle(id: number, userId: string, completed: boolean) {
     const item = await this.findOne(id, userId)
     if (!item) return null
-    return this.repo.save({ ...item, completed })
+    await this.repo.update({ id }, { ...item, completed })
+    return this.findOne(id, userId)
   }
 }

@@ -1,11 +1,11 @@
-import { TypeORMItemRepository, type IItemRepository } from './repository'
+import { TypeORMItemRepository, type IItemRepository, type ItemFilters } from './repository'
 import type { ItemModel } from '../../entities'
 
 export class ItemService {
   constructor(private readonly repo: IItemRepository = new TypeORMItemRepository()) {}
 
-  findAll(userId: string, categoryId?: number) {
-    return this.repo.findAll(userId, categoryId)
+  findAll(userId: string, filters?: ItemFilters) {
+    return this.repo.findAll(userId, filters)
   }
 
   findOne(id: number, userId: string) {

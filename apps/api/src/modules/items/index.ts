@@ -9,7 +9,7 @@ const orNotFound = <T>(r: T | null) => {
 
 export const itemsModule = new Elysia({ prefix: '/items' })
   .derive(() => ({ userId: 'user-dev' }))
-  .get('/', ({ userId, query }) => itemService.findAll(userId, query.categoryId), {
+  .get('/', ({ userId, query }) => itemService.findAll(userId, query), {
     query: ItemQuery,
   })
   .post('/', ({ userId, body }) => itemService.create(userId, body), {
@@ -19,12 +19,15 @@ export const itemsModule = new Elysia({ prefix: '/items' })
     params: ItemParams,
     body: ItemBody,
   })
-  .delete('/:id', ({ userId, params }) =>
-    itemService.remove(params.id, userId).then(orNotFound), {
+  .delete('/:id', ({ userId, params }) => itemService.remove(params.id, userId).then(orNotFound), {
     params: ItemParams,
   })
-  .patch('/:id/toggle', ({ userId, params, body }) =>
-    itemService.toggle(params.id, userId, body.completed).then(orNotFound), {
-    params: ItemParams,
-    body: ToggleBody,
-  })
+  .patch(
+    '/:id/toggle',
+    ({ userId, params, body }) =>
+      itemService.toggle(params.id, userId, body.completed).then(orNotFound),
+    {
+      params: ItemParams,
+      body: ToggleBody,
+    }
+  )

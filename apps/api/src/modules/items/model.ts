@@ -18,4 +18,10 @@ export const ItemParams = t.Object({
 
 export const ItemQuery = t.Object({
   categoryId: t.Optional(t.Numeric()),
+  completed: t.Optional(t.BooleanString()),
+  score: t.Optional(t.Numeric()),
+  name: t.Optional(t.String()),
+  deadline: t.Optional(t.String()),
+  createdAtFrom: t.Optional(t.String()),
+  createdAtTo: t.Optional(t.String()),
 })
