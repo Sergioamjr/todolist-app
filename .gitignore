@@ -23,10 +23,14 @@ database.sqlite-wal
 !.yarn/versions
 
 # testing
-/coverage
+coverage
 
 # next.js
-/.next/
+apps/web/.next
+apps/web/node_modules
+apps/web/.vercel
+apps/web/dist
+apps/web/build
 /out/
 
 # production
