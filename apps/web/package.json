@@ -1,0 +1,53 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --run next dev",
+    "build": "bun run --run next build",
+    "start": "bun run --run next start",
+    "lint": "eslint",
+    "generate": "kubb generate",
+    "postgenerate": "perl -i -0pe 's/query\\.queryKey = queryKey as TQueryKey\\s*\\n\\s*return query/return Object.assign(query, { queryKey: queryKey as TQueryKey })/g' src/gen/hooks/useGet*.ts",
+    "sync-api": "curl http://localhost:3001/swagger/json > openapi.json && bun run generate"
+  },
+  "dependencies": {
+    "@mantine/core": "^8.3.18",
+    "@mantine/dates": "^8.3.18",
+    "@mantine/hooks": "^8.3.18",
+    "@tanstack/react-query": "^5.95.2",
+    "axios": "^1.13.6",
+    "dayjs": "^1.11.20",
+    "formik": "^2.4.9",
+    "motion": "^12.38.0",
+    "next": "16.2.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-icons": "^5.6.0",
+    "yup": "^1.7.1"
+  },
+  "devDependencies": {
+    "@kubb/cli": "^4.37.0",
+    "@kubb/core": "^4.37.0",
+    "@kubb/plugin-client": "^4.37.0",
+    "@kubb/plugin-oas": "^4.37.0",
+    "@kubb/plugin-react-query": "^4.37.0",
+    "@kubb/plugin-ts": "^4.37.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "ignoreScripts": [
+    "sharp",
+    "unrs-resolver"
+  ],
+  "trustedDependencies": [
+    "sharp",
+    "unrs-resolver"
+  ]
+}

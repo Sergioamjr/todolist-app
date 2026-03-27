@@ -1,0 +1,46 @@
+@import "tailwindcss";
+@import '@mantine/core/styles.css';
+@import '@mantine/dates/styles.css';
+
+:root {
+  --foreground: #1a1a2e;
+
+  /* Override Mantine text variables */
+  --background: #ffffff;
+  --mantine-color-text: #1a1a2e;
+  --mantine-color-dimmed: #3a3a5c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f0f1a;
+    --foreground: #ededed;
+    --mantine-color-text: #ededed;
+    --mantine-color-dimmed: #a0a0c0;
+  }
+}
+
+@theme inline {
+  /* Fonts */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* Base */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Palette — aligned with Mantine violet primary */
+  --color-primary: #7950f2;
+  --color-primary-light: #e5dbff;
+  --color-primary-dark: #5f3dc4;
+  --color-accent: #845ef7;
+  --color-surface: #f3f0ff;
+  --color-dark: #1a1a2e;
+  --color-muted: #3a3a5c;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), sans-serif;
+}
