@@ -4,16 +4,16 @@
 */
 
 import fetch from "@kubb/plugin-client/clients/axios";
-import type { DeleteCategoriesByIdMutationResponse, DeleteCategoriesByIdPathParams } from "./models/DeleteCategoriesById.ts";
-import type { DeleteItemsByIdMutationResponse, DeleteItemsByIdPathParams } from "./models/DeleteItemsById.ts";
-import type { GetCategoriesQueryResponse } from "./models/GetCategories.ts";
-import type { GetIndexQueryResponse } from "./models/GetIndex.ts";
-import type { GetItemsQueryResponse, GetItemsQueryParams } from "./models/GetItems.ts";
-import type { PatchItemsByIdToggleMutationRequest, PatchItemsByIdToggleMutationResponse, PatchItemsByIdTogglePathParams } from "./models/PatchItemsByIdToggle.ts";
-import type { PostCategoriesMutationRequest, PostCategoriesMutationResponse } from "./models/PostCategories.ts";
-import type { PostItemsMutationRequest, PostItemsMutationResponse } from "./models/PostItems.ts";
-import type { PutCategoriesByIdMutationRequest, PutCategoriesByIdMutationResponse, PutCategoriesByIdPathParams } from "./models/PutCategoriesById.ts";
-import type { PutItemsByIdMutationRequest, PutItemsByIdMutationResponse, PutItemsByIdPathParams } from "./models/PutItemsById.ts";
+import type { DeleteCategoriesByIdMutationResponse, DeleteCategoriesByIdPathParams } from "./models/DeleteCategoriesById";
+import type { DeleteItemsByIdMutationResponse, DeleteItemsByIdPathParams } from "./models/DeleteItemsById";
+import type { GetCategoriesQueryResponse } from "./models/GetCategories";
+import type { GetIndexQueryResponse } from "./models/GetIndex";
+import type { GetItemsQueryResponse, GetItemsQueryParams } from "./models/GetItems";
+import type { PatchItemsByIdToggleMutationRequest, PatchItemsByIdToggleMutationResponse, PatchItemsByIdTogglePathParams } from "./models/PatchItemsByIdToggle";
+import type { PostCategoriesMutationRequest, PostCategoriesMutationResponse } from "./models/PostCategories";
+import type { PostItemsMutationRequest, PostItemsMutationResponse } from "./models/PostItems";
+import type { PutCategoriesByIdMutationRequest, PutCategoriesByIdMutationResponse, PutCategoriesByIdPathParams } from "./models/PutCategoriesById";
+import type { PutItemsByIdMutationRequest, PutItemsByIdMutationResponse, PutItemsByIdPathParams } from "./models/PutItemsById";
 import type { Client, RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 
 function getGetItemsUrl() {

@@ -16,8 +16,14 @@ export type GetItemsQueryParams = {
      * @type string | undefined
     */
     deadline?: string;
-    createdAtFrom?: (string | string | number);
-    createdAtTo?: (string | string | number);
+    /**
+     * @type string | undefined
+    */
+    createdAtFrom?: string;
+    /**
+     * @type string | undefined
+    */
+    createdAtTo?: string;
 };
 
 export type GetItems200 = any;
