@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Text, UnstyledButton, Group, Button as MantineButton } from "@mantine/core";
+import {
+  Text,
+  UnstyledButton,
+  Group,
+  Button as MantineButton,
+} from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { CiCalendarDate } from "react-icons/ci";
 import { AnimatePresence, motion } from "motion/react";
@@ -26,7 +31,13 @@ type Item = {
   createdAt: string;
 };
 
-type EditItem = { id: number; name: string; description: string; score: number; completed: boolean };
+type EditItem = {
+  id: number;
+  name: string;
+  description: string;
+  score: number;
+  completed: boolean;
+};
 
 export default function DashboardPage() {
   const [opened, setOpened] = useState(false);
@@ -34,8 +45,7 @@ export default function DashboardPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [date, setDate] = useState(dayjs());
   const { data, isLoading, isError } = useGetItems({
-    createdAtFrom: date.startOf("day").toISOString(),
-    createdAtTo: date.endOf("day").toISOString(),
+    forDate: date.toISOString(),
   });
   const queryClient = useQueryClient();
   const { mutate: toggleItem } = usePatchItemsByIdToggle({
@@ -48,12 +58,15 @@ export default function DashboardPage() {
 
   function handleDeleteConfirm() {
     if (deleteId === null) return;
-    deleteItem({ id: deleteId }, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: getItemsQueryKey() });
-        setDeleteId(null);
+    deleteItem(
+      { id: deleteId },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getItemsQueryKey() });
+          setDeleteId(null);
+        },
       },
-    });
+    );
   }
 
   const [datePickerOpened, { open: openDatePicker, close: closeDatePicker }] =
@@ -136,7 +149,11 @@ export default function DashboardPage() {
         <TaskForm onSuccess={() => setOpened(false)} />
       </Modal>
 
-      <Modal opened={editItem !== null} onClose={() => setEditItem(null)} title="Edit task">
+      <Modal
+        opened={editItem !== null}
+        onClose={() => setEditItem(null)}
+        title="Edit task"
+      >
         <TaskForm
           itemId={editItem?.id}
           initialValues={editItem ?? undefined}
@@ -149,10 +166,21 @@ export default function DashboardPage() {
         onClose={() => setDeleteId(null)}
         title="Delete task"
       >
-        <Text size="sm">Are you sure you want to delete this task? This action cannot be undone.</Text>
+        <Text size="sm">
+          Are you sure you want to delete this task? This action cannot be
+          undone.
+        </Text>
         <Group justify="flex-end" mt="md">
-          <MantineButton variant="outline" onClick={() => setDeleteId(null)}>Cancel</MantineButton>
-          <MantineButton color="red" onClick={handleDeleteConfirm} loading={isDeleting}>Delete</MantineButton>
+          <MantineButton variant="outline" onClick={() => setDeleteId(null)}>
+            Cancel
+          </MantineButton>
+          <MantineButton
+            color="red"
+            onClick={handleDeleteConfirm}
+            loading={isDeleting}
+          >
+            Delete
+          </MantineButton>
         </Group>
       </Modal>
 
@@ -176,7 +204,15 @@ export default function DashboardPage() {
                 onToggle={(completed) =>
                   toggleItem({ id: item.id, data: { completed } })
                 }
-                onEdit={() => setEditItem({ id: item.id, name: item.name, description: item.description, score: item.score, completed: item.completed })}
+                onEdit={() =>
+                  setEditItem({
+                    id: item.id,
+                    name: item.name,
+                    description: item.description,
+                    score: item.score,
+                    completed: item.completed,
+                  })
+                }
                 onDelete={() => setDeleteId(item.id)}
               />
             </motion.div>

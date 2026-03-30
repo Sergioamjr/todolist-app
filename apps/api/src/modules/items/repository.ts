@@ -1,6 +1,6 @@
-import { db, AppDataSource } from '../../db'
-import { Item } from '../../entities'
+import { db } from '../../db'
 import type { ItemModel } from '../../entities'
+import type { InValue } from '@libsql/client'
 
 export interface ItemFilters {
   categoryId?: number
@@ -8,8 +8,7 @@ export interface ItemFilters {
   score?: number
   name?: string
   deadline?: string
-  createdAtFrom?: string
-  createdAtTo?: string
+  forDate?: string
 }
 
 export interface IItemRepository {
@@ -22,10 +21,6 @@ export interface IItemRepository {
 }
 
 export class TypeORMItemRepository implements IItemRepository {
-  private get repo() {
-    return AppDataSource.getRepository(Item)
-  }
-
   async findAll(userId: string, filters: ItemFilters = {}) {
     const conditions: string[] = ['userId = ?']
     const params: unknown[] = [userId]
@@ -50,50 +45,79 @@ export class TypeORMItemRepository implements IItemRepository {
       conditions.push('deadline = ?')
       params.push(filters.deadline)
     }
-
-    if (filters.createdAtFrom !== undefined) {
-      conditions.push('createdAt >= ?')
-      params.push(filters.createdAtFrom)
+    if (filters.forDate !== undefined) {
+      conditions.push('forDate = ?')
+      params.push(filters.forDate.slice(0, 10))
     }
-    // if (filters.createdAtTo !== undefined) {
-    //   conditions.push('createdAt <= ?')
-    //   params.push(filters.createdAtTo)
-    // }
 
     const where = conditions.join(' AND ')
-    return db
-      .query(`SELECT * FROM item WHERE ${where}`)
-      .all(...(params as unknown[] as any)) as ItemModel[]
+    const result = await db.execute({
+      sql: `SELECT * FROM item WHERE ${where}`,
+      args: params as InValue[],
+    })
+    return result.rows as unknown as ItemModel[]
   }
 
   async findOne(id: number, userId: string) {
-    return db
-      .query('SELECT * FROM item WHERE id = ? AND userId = ?')
-      .get(id, userId) as ItemModel | null
+    const result = await db.execute({
+      sql: 'SELECT * FROM item WHERE id = ? AND userId = ?',
+      args: [id, userId],
+    })
+    return (result.rows[0] ?? null) as unknown as ItemModel | null
   }
 
   async create(userId: string, data: Partial<ItemModel>) {
-    return this.repo.save({ ...data, userId })
+    const forDate = data.forDate ?? new Date().toISOString().slice(0, 10)
+    const result = await db.execute({
+      sql: `INSERT INTO item (name, description, score, completed, deadline, forDate, userId, categoryId)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: [
+        data.name ?? '',
+        data.description ?? null,
+        data.score ?? 3,
+        data.completed ? 1 : 0,
+        data.deadline ?? null,
+        forDate,
+        userId,
+        data.categoryId ?? null,
+      ],
+    })
+    return this.findOne(Number(result.lastInsertRowid), userId) as Promise<ItemModel>
   }
 
   async update(id: number, userId: string, data: Partial<ItemModel>) {
     const item = await this.findOne(id, userId)
     if (!item) return null
-    await this.repo.update({ id }, { ...item, ...data })
+    await db.execute({
+      sql: `UPDATE item SET name = ?, description = ?, score = ?, deadline = ?, forDate = ?, categoryId = ? WHERE id = ? AND userId = ?`,
+      args: [
+        data.name ?? item.name,
+        data.description ?? item.description ?? null,
+        data.score ?? item.score,
+        data.deadline ?? item.deadline ?? null,
+        data.forDate ?? item.forDate,
+        data.categoryId ?? item.categoryId ?? null,
+        id,
+        userId,
+      ],
+    })
     return this.findOne(id, userId)
   }
 
   async remove(id: number, userId: string) {
     const item = await this.findOne(id, userId)
     if (!item) return null
-    await this.repo.remove(item)
+    await db.execute({ sql: 'DELETE FROM item WHERE id = ? AND userId = ?', args: [id, userId] })
     return { deleted: true as const }
   }
 
   async toggle(id: number, userId: string, completed: boolean) {
     const item = await this.findOne(id, userId)
     if (!item) return null
-    await this.repo.update({ id }, { ...item, completed })
+    await db.execute({
+      sql: 'UPDATE item SET completed = ? WHERE id = ? AND userId = ?',
+      args: [completed ? 1 : 0, id, userId],
+    })
     return this.findOne(id, userId)
   }
 }

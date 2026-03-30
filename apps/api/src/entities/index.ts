@@ -14,6 +14,7 @@ export interface ItemModel {
   score: number
   completed: boolean
   deadline: string
+  forDate: string
   userId: string
   categoryId: number
   category: CategoryModel
@@ -41,6 +42,7 @@ export const Item = new EntitySchema<ItemModel>({
     score: { type: Number, default: 3 },
     completed: { type: Boolean, default: false },
     deadline: { type: 'date', nullable: true },
+    forDate: { type: 'date', nullable: false },
     userId: { type: String },
     categoryId: { type: Number, nullable: true },
     createdAt: { type: Date, createDate: true },

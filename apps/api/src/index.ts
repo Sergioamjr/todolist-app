@@ -10,11 +10,15 @@ await initDb()
 
 const app = new Elysia()
   .use(swagger())
-  .use(cors({ origin: 'http://localhost:3000', credentials: true }))
+  .use(cors({ origin: process.env.UI_URL, credentials: true }))
   // .mount(auth.handler)
   .use(itemsModule)
   .use(categoriesModule)
   .get('/', () => ({ message: 'Hello World' }))
-  .listen(3001)
+
+// Listen only when not in Vercel
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(3001)
+}
 
 console.log(`API running at http://localhost:${app.server?.port}`)

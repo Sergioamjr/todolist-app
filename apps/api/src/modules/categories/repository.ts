@@ -1,5 +1,4 @@
-import { db, AppDataSource } from '../../db'
-import { Category } from '../../entities'
+import { db } from '../../db'
 import type { CategoryModel } from '../../entities'
 
 export interface ICategoryRepository {
@@ -10,32 +9,44 @@ export interface ICategoryRepository {
 }
 
 export class TypeORMCategoryRepository implements ICategoryRepository {
-  private get repo() {
-    return AppDataSource.getRepository(Category)
-  }
-
   async findAll(_userId: string) {
-    return db.query('SELECT * FROM category').all() as CategoryModel[]
+    const result = await db.execute('SELECT * FROM category')
+    return result.rows as unknown as CategoryModel[]
   }
 
   async findOne(id: number, userId: string) {
-    return db.query('SELECT * FROM category WHERE id = ? AND userId = ?').get(id, userId) as CategoryModel | null
+    const result = await db.execute({
+      sql: 'SELECT * FROM category WHERE id = ? AND userId = ?',
+      args: [id, userId],
+    })
+    return (result.rows[0] ?? null) as unknown as CategoryModel | null
   }
 
   async create(userId: string, data: Partial<CategoryModel>) {
-    return this.repo.save({ ...data, userId })
+    const result = await db.execute({
+      sql: 'INSERT INTO category (name, userId) VALUES (?, ?)',
+      args: [data.name ?? '', userId],
+    })
+    return this.findOne(Number(result.lastInsertRowid), userId) as Promise<CategoryModel>
   }
 
   async update(id: number, userId: string, data: Partial<CategoryModel>) {
     const category = await this.findOne(id, userId)
     if (!category) return null
-    return this.repo.save({ ...category, ...data })
+    await db.execute({
+      sql: 'UPDATE category SET name = ? WHERE id = ? AND userId = ?',
+      args: [data.name ?? category.name, id, userId],
+    })
+    return this.findOne(id, userId)
   }
 
   async remove(id: number, userId: string) {
     const category = await this.findOne(id, userId)
     if (!category) return null
-    await this.repo.remove(category)
+    await db.execute({
+      sql: 'DELETE FROM category WHERE id = ? AND userId = ?',
+      args: [id, userId],
+    })
     return { deleted: true as const }
   }
 }

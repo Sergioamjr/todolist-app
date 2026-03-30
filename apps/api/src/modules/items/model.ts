@@ -5,6 +5,7 @@ export const ItemBody = t.Object({
   description: t.Optional(t.String()),
   score: t.Optional(t.Number({ minimum: 1, maximum: 5, default: 3 })),
   deadline: t.Optional(t.String()),
+  forDate: t.Optional(t.String()),
   categoryId: t.Optional(t.Number()),
 })
 
@@ -22,6 +23,5 @@ export const ItemQuery = t.Object({
   score: t.Optional(t.Numeric()),
   name: t.Optional(t.String()),
   deadline: t.Optional(t.String()),
-  createdAtFrom: t.Optional(t.String()),
-  createdAtTo: t.Optional(t.String()),
+  forDate: t.Optional(t.String()),
 })

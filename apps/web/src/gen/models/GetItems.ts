@@ -19,11 +19,7 @@ export type GetItemsQueryParams = {
     /**
      * @type string | undefined
     */
-    createdAtFrom?: string;
-    /**
-     * @type string | undefined
-    */
-    createdAtTo?: string;
+    forDate?: string;
 };
 
 export type GetItems200 = any;

@@ -32,6 +32,10 @@ export type PutItemsByIdMutationRequest = {
     */
     deadline?: string;
     /**
+     * @type string | undefined
+    */
+    forDate?: string;
+    /**
      * @type number | undefined
     */
     categoryId?: number;
