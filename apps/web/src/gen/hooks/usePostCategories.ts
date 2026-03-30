@@ -3,10 +3,10 @@
 * Do not edit manually.
 */
 
-import type { PostCategoriesMutationRequest, PostCategoriesMutationResponse } from "../models/PostCategories.ts";
+import type { PostCategoriesMutationRequest, PostCategoriesMutationResponse } from "../models/PostCategories";
 import type { Client, RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
-import { postCategories } from "../client.ts";
+import { postCategories } from "../client";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const postCategoriesMutationKey = () => [{ url: '/categories/' }] as const

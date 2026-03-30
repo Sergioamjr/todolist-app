@@ -3,10 +3,10 @@
 * Do not edit manually.
 */
 
-import type { PatchItemsByIdToggleMutationRequest, PatchItemsByIdToggleMutationResponse, PatchItemsByIdTogglePathParams } from "../models/PatchItemsByIdToggle.ts";
+import type { PatchItemsByIdToggleMutationRequest, PatchItemsByIdToggleMutationResponse, PatchItemsByIdTogglePathParams } from "../models/PatchItemsByIdToggle";
 import type { Client, RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
-import { patchItemsByIdToggle } from "../client.ts";
+import { patchItemsByIdToggle } from "../client";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const patchItemsByIdToggleMutationKey = () => [{ url: '/items/:id/toggle' }] as const

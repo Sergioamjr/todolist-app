@@ -3,10 +3,10 @@
 * Do not edit manually.
 */
 
-import type { GetItemsQueryResponse, GetItemsQueryParams } from "../models/GetItems.ts";
+import type { GetItemsQueryResponse, GetItemsQueryParams } from "../models/GetItems";
 import type { Client, RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryResult } from "@tanstack/react-query";
-import { getItems } from "../client.ts";
+import { getItems } from "../client";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 export const getItemsSuspenseQueryKey = (params?: GetItemsQueryParams) => [{ url: '/items/' }, ...(params ? [params] : [])] as const

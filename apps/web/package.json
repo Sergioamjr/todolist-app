@@ -8,7 +8,7 @@
     "start": "bun run --run next start",
     "lint": "eslint",
     "generate": "kubb generate",
-    "postgenerate": "perl -i -0pe 's/query\\.queryKey = queryKey as TQueryKey\\s*\\n\\s*return query/return Object.assign(query, { queryKey: queryKey as TQueryKey })/g' src/gen/hooks/useGet*.ts && perl -i -pe 's/(from \"[^\"]+)\\.ts(\")/$1$2/g' src/gen/client.ts",
+    "postgenerate": "bash scripts/postgenerate.sh",
     "sync-api": "curl http://localhost:3001/swagger/json > openapi.json && bun run generate"
   },
   "dependencies": {

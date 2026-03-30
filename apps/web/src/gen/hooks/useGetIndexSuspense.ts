@@ -3,10 +3,10 @@
 * Do not edit manually.
 */
 
-import type { GetIndexQueryResponse } from "../models/GetIndex.ts";
+import type { GetIndexQueryResponse } from "../models/GetIndex";
 import type { Client, RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { QueryKey, QueryClient, UseSuspenseQueryOptions, UseSuspenseQueryResult } from "@tanstack/react-query";
-import { getIndex } from "../client.ts";
+import { getIndex } from "../client";
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 
 export const getIndexSuspenseQueryKey = () => [{ url: '/' }] as const

@@ -3,10 +3,10 @@
 * Do not edit manually.
 */
 
-import type { PutCategoriesByIdMutationRequest, PutCategoriesByIdMutationResponse, PutCategoriesByIdPathParams } from "../models/PutCategoriesById.ts";
+import type { PutCategoriesByIdMutationRequest, PutCategoriesByIdMutationResponse, PutCategoriesByIdPathParams } from "../models/PutCategoriesById";
 import type { Client, RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
-import { putCategoriesById } from "../client.ts";
+import { putCategoriesById } from "../client";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const putCategoriesByIdMutationKey = () => [{ url: '/categories/:id' }] as const

@@ -3,10 +3,10 @@
 * Do not edit manually.
 */
 
-import type { GetCategoriesQueryResponse } from "../models/GetCategories.ts";
+import type { GetCategoriesQueryResponse } from "../models/GetCategories";
 import type { Client, RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
-import { getCategories } from "../client.ts";
+import { getCategories } from "../client";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
 export const getCategoriesQueryKey = () => [{ url: '/categories/' }] as const

@@ -3,10 +3,10 @@
 * Do not edit manually.
 */
 
-import type { GetIndexQueryResponse } from "../models/GetIndex.ts";
+import type { GetIndexQueryResponse } from "../models/GetIndex";
 import type { Client, RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { QueryKey, QueryClient, QueryObserverOptions, UseQueryResult } from "@tanstack/react-query";
-import { getIndex } from "../client.ts";
+import { getIndex } from "../client";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 
 export const getIndexQueryKey = () => [{ url: '/' }] as const

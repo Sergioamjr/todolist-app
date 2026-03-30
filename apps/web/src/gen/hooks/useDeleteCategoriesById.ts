@@ -3,10 +3,10 @@
 * Do not edit manually.
 */
 
-import type { DeleteCategoriesByIdMutationResponse, DeleteCategoriesByIdPathParams } from "../models/DeleteCategoriesById.ts";
+import type { DeleteCategoriesByIdMutationResponse, DeleteCategoriesByIdPathParams } from "../models/DeleteCategoriesById";
 import type { Client, RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 import type { UseMutationOptions, UseMutationResult, QueryClient } from "@tanstack/react-query";
-import { deleteCategoriesById } from "../client.ts";
+import { deleteCategoriesById } from "../client";
 import { mutationOptions, useMutation } from "@tanstack/react-query";
 
 export const deleteCategoriesByIdMutationKey = () => [{ url: '/categories/:id' }] as const
