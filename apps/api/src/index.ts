@@ -19,6 +19,7 @@ const app = new Elysia()
 // Listen only when not in Vercel
 if (process.env.NODE_ENV !== 'production') {
   app.listen(3001)
+  console.log(`API running at http://localhost:${app.server?.port}`)
 }
 
-console.log(`API running at http://localhost:${app.server?.port}`)
+export default app
