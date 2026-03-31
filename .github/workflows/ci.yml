@@ -39,7 +39,11 @@ jobs:
         run: bun install
 
       - name: Fetch OpenAPI spec from deployed API
-        run: curl -f -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_BYPASS_SECRET }}" "${{ needs.deploy-api.outputs.api_url }}/swagger/json" -o apps/web/openapi.json
+        run: |
+          curl -f \
+            -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_BYPASS_SECRET }}" \
+            "${{ needs.deploy-api.outputs.api_url }}/swagger/json" \
+            -o apps/web/openapi.json
 
       - name: Generate Kubb types and hooks
         run: bun run --cwd apps/web generate
