@@ -14,9 +14,7 @@
     "better-sqlite3": "^12.8.0",
     "dayjs": "^1.11.20",
     "dayjs-plugin-utc": "^0.1.2",
-    "elysia": "^1.4.28",
-    "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.28"
+    "elysia": "^1.4.28"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
