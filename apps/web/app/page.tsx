@@ -41,8 +41,8 @@ type EditItem = {
 
 export default function DashboardPage() {
   const [opened, setOpened] = useState(false);
-  const [editItem, setEditItem] = useState<EditItem | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [editItem, setEditItem] = useState<EditItem | null>(null);
   const [date, setDate] = useState(dayjs());
   const { data, isLoading, isError } = useGetItems({
     forDate: date.toISOString(),
