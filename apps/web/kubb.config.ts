@@ -15,7 +15,7 @@ export default defineConfig({
     }),
     pluginClient({
       output: { path: 'client.ts' },
-      baseURL: 'http://localhost:3001',
+      baseURL: process.env['API_URL']
     }),
     pluginReactQuery({
       output: { path: 'hooks' },

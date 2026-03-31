@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "todo-list-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
