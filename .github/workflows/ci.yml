@@ -54,3 +54,12 @@ jobs:
         run: bun run --cwd apps/web build
         env:
           NEXT_PUBLIC_API_URL: ${{ needs.deploy-api.outputs.api_url }}
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Deploy Web
+        run: vercel deploy --prod --cwd apps/web --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID }}
