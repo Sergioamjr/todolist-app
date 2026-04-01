@@ -8,7 +8,25 @@ import { categoriesModule } from './modules/categories'
 
 const app = new Elysia()
   .use(swagger())
-  .use(cors({ origin: process.env.UI_URL, credentials: true }))
+  .use(
+    cors({
+      origin: (request) => {
+        const origin = request.headers.get('origin')
+        const expected = process.env.UI_URL?.replace(/\/$/, '') // Remove trailing slash if present
+
+        console.log('cors', { origin, expected })
+
+        if (origin === expected) return true
+
+        // Optional: Allow localhost for development
+        if (origin?.startsWith('http://localhost:')) return true
+
+        return false
+      },
+      credentials: true,
+      allowedHeaders: ['Content-Type', 'Authorization'], // Good practice to be explicit
+    })
+  )
   // .mount(auth.handler)
   .use(itemsModule)
   .use(categoriesModule)
