@@ -4,8 +4,8 @@ import { Modal as MantineModal, ModalProps } from "@mantine/core";
 
 export default function Modal({
   opened,
-  onClose,
   children,
+  onClose,
   ...props
 }: ModalProps) {
   return (
