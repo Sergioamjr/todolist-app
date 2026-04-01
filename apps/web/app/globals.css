@@ -7,8 +7,8 @@
 
   /* Override Mantine text variables */
   --background: #ffffff;
-  --mantine-color-text: #1a1a2e;
   --mantine-color-dimmed: #3a3a5c;
+  --mantine-color-text: #1a1a2e;
 }
 
 @media (prefers-color-scheme: dark) {
