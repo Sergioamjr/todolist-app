@@ -2,9 +2,10 @@ import { Elysia } from 'elysia'
 import { swagger } from '@elysiajs/swagger'
 import { cors } from '@elysiajs/cors'
 import { initDb } from './db'
-// import { auth } from './modules/auth'
+import { auth, authModule } from './modules/auth'
 import { itemsModule } from './modules/items'
 import { categoriesModule } from './modules/categories'
+import { userModule } from './modules/user'
 
 const app = new Elysia()
   .use(swagger())
@@ -16,7 +17,7 @@ const app = new Elysia()
 
         console.log('cors', { origin, expected })
 
-        if (origin === expected) return true
+        if (origin === expected || expected === '*') return true
 
         // Optional: Allow localhost for development
         if (origin?.startsWith('http://localhost:')) return true
@@ -27,9 +28,11 @@ const app = new Elysia()
       allowedHeaders: ['Content-Type', 'Authorization'], // Good practice to be explicit
     })
   )
-  // .mount(auth.handler)
+  .mount(auth.handler)
+  .use(authModule)
   .use(itemsModule)
   .use(categoriesModule)
+  .use(userModule)
   .get('/', () => ({ message: 'Hello World' }))
 
 if (process.env.NODE_ENV !== 'production') {
