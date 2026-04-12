@@ -27,6 +27,13 @@ export default function LoginPage() {
     setMode((m) => (m === "signin" ? "signup" : "signin"));
   }
 
+ const loginWithGoogle = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: process.env.NEXT_PUBLIC_REDIRECT_URL,
+    });
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -102,6 +109,10 @@ export default function LoginPage() {
               {mode === "signin" ? "Create account" : "Sign in"}
             </Anchor>
           </Text>
+
+          <Button fullWidth onClick={loginWithGoogle} loading={loading} mb="sm">
+            Login with Google
+          </Button>
         </Paper>
       </div>
     </AppLayout>
