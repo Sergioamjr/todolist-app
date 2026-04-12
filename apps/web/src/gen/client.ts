@@ -9,15 +9,89 @@ import type { DeleteItemsByIdMutationResponse, DeleteItemsByIdPathParams } from 
 import type { GetCategoriesQueryResponse } from "./models/GetCategories";
 import type { GetIndexQueryResponse } from "./models/GetIndex";
 import type { GetItemsQueryResponse, GetItemsQueryParams } from "./models/GetItems";
+import type { GetUsersMeQueryResponse } from "./models/GetUsersMe";
 import type { PatchItemsByIdToggleMutationRequest, PatchItemsByIdToggleMutationResponse, PatchItemsByIdTogglePathParams } from "./models/PatchItemsByIdToggle";
+import type { PatchUsersMeMutationRequest, PatchUsersMeMutationResponse } from "./models/PatchUsersMe";
+import type { PostAuthForgotPasswordMutationRequest, PostAuthForgotPasswordMutationResponse } from "./models/PostAuthForgotPassword";
+import type { PostAuthLoginMutationRequest, PostAuthLoginMutationResponse } from "./models/PostAuthLogin";
+import type { PostAuthRegisterMutationRequest, PostAuthRegisterMutationResponse } from "./models/PostAuthRegister";
+import type { PostAuthResetPasswordMutationRequest, PostAuthResetPasswordMutationResponse } from "./models/PostAuthResetPassword";
 import type { PostCategoriesMutationRequest, PostCategoriesMutationResponse } from "./models/PostCategories";
 import type { PostItemsMutationRequest, PostItemsMutationResponse } from "./models/PostItems";
 import type { PutCategoriesByIdMutationRequest, PutCategoriesByIdMutationResponse, PutCategoriesByIdPathParams } from "./models/PutCategoriesById";
 import type { PutItemsByIdMutationRequest, PutItemsByIdMutationResponse, PutItemsByIdPathParams } from "./models/PutItemsById";
 import type { Client, RequestConfig, ResponseErrorConfig } from "@kubb/plugin-client/clients/axios";
 
+function getPostAuthRegisterUrl() {
+  const res = { method: 'POST', url: `/auth/register` as const }
+  return res
+}
+
+/**
+ * {@link /auth/register}
+ */
+export async function postAuthRegister(data: PostAuthRegisterMutationRequest, config: Partial<RequestConfig<PostAuthRegisterMutationRequest>> & { client?: Client } = {}) {
+  const { client: request = fetch, ...requestConfig } = config
+
+  const requestData = data
+
+  const res = await request<PostAuthRegisterMutationResponse, ResponseErrorConfig<Error>, PostAuthRegisterMutationRequest>({ method : "POST", url : getPostAuthRegisterUrl().url.toString(), data : requestData, ... requestConfig })
+  return res.data
+}
+
+function getPostAuthLoginUrl() {
+  const res = { method: 'POST', url: `/auth/login` as const }
+  return res
+}
+
+/**
+ * {@link /auth/login}
+ */
+export async function postAuthLogin(data: PostAuthLoginMutationRequest, config: Partial<RequestConfig<PostAuthLoginMutationRequest>> & { client?: Client } = {}) {
+  const { client: request = fetch, ...requestConfig } = config
+
+  const requestData = data
+
+  const res = await request<PostAuthLoginMutationResponse, ResponseErrorConfig<Error>, PostAuthLoginMutationRequest>({ method : "POST", url : getPostAuthLoginUrl().url.toString(), data : requestData, ... requestConfig })
+  return res.data
+}
+
+function getPostAuthForgotPasswordUrl() {
+  const res = { method: 'POST', url: `/auth/forgot-password` as const }
+  return res
+}
+
+/**
+ * {@link /auth/forgot-password}
+ */
+export async function postAuthForgotPassword(data: PostAuthForgotPasswordMutationRequest, config: Partial<RequestConfig<PostAuthForgotPasswordMutationRequest>> & { client?: Client } = {}) {
+  const { client: request = fetch, ...requestConfig } = config
+
+  const requestData = data
+
+  const res = await request<PostAuthForgotPasswordMutationResponse, ResponseErrorConfig<Error>, PostAuthForgotPasswordMutationRequest>({ method : "POST", url : getPostAuthForgotPasswordUrl().url.toString(), data : requestData, ... requestConfig })
+  return res.data
+}
+
+function getPostAuthResetPasswordUrl() {
+  const res = { method: 'POST', url: `/auth/reset-password` as const }
+  return res
+}
+
+/**
+ * {@link /auth/reset-password}
+ */
+export async function postAuthResetPassword(data: PostAuthResetPasswordMutationRequest, config: Partial<RequestConfig<PostAuthResetPasswordMutationRequest>> & { client?: Client } = {}) {
+  const { client: request = fetch, ...requestConfig } = config
+
+  const requestData = data
+
+  const res = await request<PostAuthResetPasswordMutationResponse, ResponseErrorConfig<Error>, PostAuthResetPasswordMutationRequest>({ method : "POST", url : getPostAuthResetPasswordUrl().url.toString(), data : requestData, ... requestConfig })
+  return res.data
+}
+
 function getGetItemsUrl() {
-  const res = { method: 'GET', url: `http://localhost:3001/items/` as const }
+  const res = { method: 'GET', url: `/items/` as const }
   return res
 }
 
@@ -34,7 +108,7 @@ export async function getItems(params?: GetItemsQueryParams, config: Partial<Req
 }
 
 function getPostItemsUrl() {
-  const res = { method: 'POST', url: `http://localhost:3001/items/` as const }
+  const res = { method: 'POST', url: `/items/` as const }
   return res
 }
 
@@ -51,7 +125,7 @@ export async function postItems(data: PostItemsMutationRequest, config: Partial<
 }
 
 function getPutItemsByIdUrl(id: PutItemsByIdPathParams["id"]) {
-  const res = { method: 'PUT', url: `http://localhost:3001/items/${id}` as const }
+  const res = { method: 'PUT', url: `/items/${id}` as const }
   return res
 }
 
@@ -68,7 +142,7 @@ export async function putItemsById(id: PutItemsByIdPathParams["id"], data: PutIt
 }
 
 function getDeleteItemsByIdUrl(id: DeleteItemsByIdPathParams["id"]) {
-  const res = { method: 'DELETE', url: `http://localhost:3001/items/${id}` as const }
+  const res = { method: 'DELETE', url: `/items/${id}` as const }
   return res
 }
 
@@ -85,7 +159,7 @@ export async function deleteItemsById(id: DeleteItemsByIdPathParams["id"], confi
 }
 
 function getPatchItemsByIdToggleUrl(id: PatchItemsByIdTogglePathParams["id"]) {
-  const res = { method: 'PATCH', url: `http://localhost:3001/items/${id}/toggle` as const }
+  const res = { method: 'PATCH', url: `/items/${id}/toggle` as const }
   return res
 }
 
@@ -102,7 +176,7 @@ export async function patchItemsByIdToggle(id: PatchItemsByIdTogglePathParams["i
 }
 
 function getGetCategoriesUrl() {
-  const res = { method: 'GET', url: `http://localhost:3001/categories/` as const }
+  const res = { method: 'GET', url: `/categories/` as const }
   return res
 }
 
@@ -119,7 +193,7 @@ export async function getCategories(config: Partial<RequestConfig> & { client?: 
 }
 
 function getPostCategoriesUrl() {
-  const res = { method: 'POST', url: `http://localhost:3001/categories/` as const }
+  const res = { method: 'POST', url: `/categories/` as const }
   return res
 }
 
@@ -136,7 +210,7 @@ export async function postCategories(data: PostCategoriesMutationRequest, config
 }
 
 function getPutCategoriesByIdUrl(id: PutCategoriesByIdPathParams["id"]) {
-  const res = { method: 'PUT', url: `http://localhost:3001/categories/${id}` as const }
+  const res = { method: 'PUT', url: `/categories/${id}` as const }
   return res
 }
 
@@ -153,7 +227,7 @@ export async function putCategoriesById(id: PutCategoriesByIdPathParams["id"], d
 }
 
 function getDeleteCategoriesByIdUrl(id: DeleteCategoriesByIdPathParams["id"]) {
-  const res = { method: 'DELETE', url: `http://localhost:3001/categories/${id}` as const }
+  const res = { method: 'DELETE', url: `/categories/${id}` as const }
   return res
 }
 
@@ -169,8 +243,42 @@ export async function deleteCategoriesById(id: DeleteCategoriesByIdPathParams["i
   return res.data
 }
 
+function getGetUsersMeUrl() {
+  const res = { method: 'GET', url: `/users/me` as const }
+  return res
+}
+
+/**
+ * {@link /users/me}
+ */
+export async function getUsersMe(config: Partial<RequestConfig> & { client?: Client } = {}) {
+  const { client: request = fetch, ...requestConfig } = config
+
+
+
+  const res = await request<GetUsersMeQueryResponse, ResponseErrorConfig<Error>, unknown>({ method : "GET", url : getGetUsersMeUrl().url.toString(), ... requestConfig })
+  return res.data
+}
+
+function getPatchUsersMeUrl() {
+  const res = { method: 'PATCH', url: `/users/me` as const }
+  return res
+}
+
+/**
+ * {@link /users/me}
+ */
+export async function patchUsersMe(data: PatchUsersMeMutationRequest, config: Partial<RequestConfig<PatchUsersMeMutationRequest>> & { client?: Client } = {}) {
+  const { client: request = fetch, ...requestConfig } = config
+
+  const requestData = data
+
+  const res = await request<PatchUsersMeMutationResponse, ResponseErrorConfig<Error>, PatchUsersMeMutationRequest>({ method : "PATCH", url : getPatchUsersMeUrl().url.toString(), data : requestData, ... requestConfig })
+  return res.data
+}
+
 function getGetIndexUrl() {
-  const res = { method: 'GET', url: `http://localhost:3001/` as const }
+  const res = { method: 'GET', url: `/` as const }
   return res
 }
 

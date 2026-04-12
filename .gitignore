@@ -57,3 +57,6 @@ yarn-error.log*
 next-env.d.ts
 
 .env
+
+apps/web/src/gen
+apps/web/openapi.json
