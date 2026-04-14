@@ -1,4 +1,5 @@
 import { Elysia } from 'elysia'
+import { node } from '@elysiajs/node'
 import { swagger } from '@elysiajs/swagger'
 import { cors } from '@elysiajs/cors'
 import { initDb } from './db'
@@ -7,7 +8,7 @@ import { itemsModule } from './modules/items'
 import { categoriesModule } from './modules/categories'
 import { userModule } from './modules/user'
 
-const app = new Elysia()
+const app = new Elysia({ adapter: node() })
   .use(swagger())
   .use(
     cors({
