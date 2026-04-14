@@ -1,4 +1,4 @@
-import { auth } from '.'
+import { auth } from './better-auth'
 
 export interface SignUpData {
   name: string
