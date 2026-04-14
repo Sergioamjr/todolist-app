@@ -2,7 +2,9 @@
   "name": "todo-list-api",
   "scripts": {
     "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun --packages external",
     "start": "bun run src/index.ts",
+    "start:dist": "bun run dist/index.js",
     "lint": "eslint src",
     "format": "prettier --write src"
   },

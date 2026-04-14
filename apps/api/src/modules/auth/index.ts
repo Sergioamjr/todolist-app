@@ -1,33 +1,7 @@
 import Elysia from 'elysia'
-import { betterAuth, BetterAuthOptions } from 'better-auth'
-// import { jwt } from 'better-auth/plugins'
-import { LibsqlDialect } from '@libsql/kysely-libsql'
-import { db } from '../../db'
 import { SignUpBody, SignInBody, ForgotPasswordBody, ResetPasswordBody } from './model'
 import { authService } from './service'
-
-export const auth = betterAuth({
-  database: {
-    dialect: new LibsqlDialect({ client: db as any }),
-    type: 'sqlite',
-  },
-  socialProviders: {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    },
-  },
-  emailAndPassword: {
-    enabled: true,
-    sendResetPassword: async ({ user, url }) => {
-      // TODO: replace with a real email provider (e.g. Resend, Nodemailer)
-      console.log(`[password-reset] Send link to ${user.email}: ${url}`)
-    },
-  },
-  baseURL: process.env.BETTER_AUTH_URL,
-  trustedOrigins: ['http://localhost:3000'],
-  // plugins: [jwt()],
-} satisfies BetterAuthOptions)
+export { auth } from './auth-instance'
 
 export const authGuard = new Elysia({ name: 'auth-guard' })
   .derive({ as: 'scoped' }, async ({ request }) => {

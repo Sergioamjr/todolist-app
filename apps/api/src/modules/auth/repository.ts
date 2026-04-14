@@ -1,4 +1,4 @@
-import { auth } from '.'
+import { auth } from './auth-instance'
 
 export interface SignUpData {
   name: string
