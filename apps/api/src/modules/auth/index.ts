@@ -1,7 +1,8 @@
 import Elysia from 'elysia'
 import { SignUpBody, SignInBody, ForgotPasswordBody, ResetPasswordBody } from './model'
 import { authService } from './service'
-export { auth } from './auth-instance'
+import { auth } from './auth-instance'
+export { auth }
 
 export const authGuard = new Elysia({ name: 'auth-guard' })
   .derive({ as: 'scoped' }, async ({ request }) => {
