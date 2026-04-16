@@ -29,9 +29,10 @@ Install dependencies from root: `bun install`
 
 ## Architecture
 
-Monorepo with two apps under `apps/`:
+Monorepo with three apps under `apps/`:
 
-- **`apps/api`** — Bun + Elysia REST API on port 3001, TypeORM with SQLite, better-auth for auth, Swagger docs auto-generated
+- **`apps/api`** — Legacy Bun + Elysia backend (do not use for new work)
+- **`apps/api_node`** — Active Node.js + Elysia REST API on port 3001, TypeORM with SQLite, better-auth for auth, Swagger docs auto-generated
 - **`apps/web`** — Next.js 16 (App Router), React Query for server state, Tailwind + Mantine UI, D3.js charts
 
 ### Auth
@@ -43,32 +44,32 @@ The `user.id` is a **string** (not number) — all FK references to `userId` mus
 ### Data Model
 
 - `User` 1:N `Item`
-- `User` 1:N `Category`
-- `Category` 1:N `Item` (optional; null categoryId = "Uncategorized")
-- `Item.score` is 1–5 (default 3); points only count when `completed = true`
+- `Item.priority` is 1–5 (default 3); 1=low, 5=high
+- `Item.tags` is a comma-separated string (optional)
+- `Item.featured` marks items pinned to the home page
 
 ### API Routes
 
 - `/auth/*` — better-auth (no custom code)
-- `/items` — CRUD + `PATCH /items/:id/toggle`
-- `/categories` — CRUD
-- Stats queries are SQL aggregates on the `item` table (see SPEC.md §6)
+- `/items` — CRUD; query params: `tags`, `priority`, `completed`, date range
+- Analytics queries are SQL aggregates on the `item` table (see SPEC.md §6)
 
 ### Frontend Structure
 
 ```
 apps/web/
   app/
-    items/
-    categories/
-    dashboard/
+    (home)/
+    login/
+    analytics/
   services/api.ts       # API client
-  hooks/                # React Query hooks (useItems, useCategories)
+  hooks/                # React Query hooks
+  shared/utils.ts
   types/
 ```
 
-React Query cache keys: `['items']`, `['items', categoryId]`, `['categories']`, `['stats', 'daily'|'monthly'|'category']`
+React Query cache keys: `['items']`, `['stats', 'week'|'month'|'year']`
 
 ### Database Indexes
 
-The following indexes should exist on the `item` table: `userId`, `completed`, `createdAt`, `categoryId`.
+The following indexes should exist on the `item` table: `userId`, `completed`, `createdAt`.
