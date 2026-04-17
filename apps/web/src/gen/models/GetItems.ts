@@ -21,6 +21,14 @@ export type GetItemsQueryParams = {
      * @type string | undefined
     */
     featured?: string;
+    /**
+     * @type string | undefined
+    */
+    createdAtFrom?: string;
+    /**
+     * @type string | undefined
+    */
+    createdAtTo?: string;
 };
 
 export type GetItems200 = any;

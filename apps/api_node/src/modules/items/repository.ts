@@ -7,6 +7,8 @@ export interface ItemFilters {
   priority?: number
   tags?: string
   featured?: boolean
+  createdAtFrom?: string
+  createdAtTo?: string
 }
 
 export interface IItemRepository {
@@ -51,6 +53,14 @@ export class LibsqlItemRepository implements IItemRepository {
     if (filters.featured !== undefined) {
       conditions.push('item.featured = ?')
       args.push(filters.featured ? 1 : 0)
+    }
+    if (filters.createdAtFrom !== undefined) {
+      conditions.push('item.createdAt >= ?')
+      args.push(filters.createdAtFrom)
+    }
+    if (filters.createdAtTo !== undefined) {
+      conditions.push('item.createdAt <= ?')
+      args.push(filters.createdAtTo)
     }
 
     const result = await db.execute({

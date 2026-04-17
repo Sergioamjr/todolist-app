@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Text, Button as MantineButton, Group } from "@mantine/core";
+import { Text, Button as MantineButton, Group, Select } from "@mantine/core";
 import { AnimatePresence, motion } from "motion/react";
 import { useQueryClient } from "@tanstack/react-query";
 import AppLayout from "@/components/AppLayout";
@@ -40,10 +40,45 @@ export default function DashboardPage() {
   const [opened, setOpened] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editItem, setEditItem] = useState<EditItem | null>(null);
+  const [filter, setFilter] = useState<string | null>(null);
+  const [periodIndex, setPeriodIndex] = useState(0);
   const router = useRouter();
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
-  const { data, isLoading, isError } = useGetItems();
+
+  function getPeriodRange(index: number): { from: Date; to: Date } {
+    const now = new Date();
+    if (filter === "weekly") {
+      const startOfWeek = new Date(now);
+      startOfWeek.setDate(now.getDate() - now.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+      const from = new Date(startOfWeek);
+      from.setDate(from.getDate() - index * 7);
+      const to = new Date(from);
+      to.setDate(to.getDate() + 7);
+      return { from, to };
+    }
+    if (filter === "monthly") {
+      const from = new Date(now.getFullYear(), now.getMonth() - index, 1);
+      const to = new Date(now.getFullYear(), now.getMonth() - index + 1, 1);
+      return { from, to };
+    }
+    // daily (default)
+    const from = new Date(now);
+    from.setDate(from.getDate() - index);
+    from.setHours(0, 0, 0, 0);
+    const to = new Date(from);
+    to.setHours(23, 59, 59, 999);
+    return { from, to };
+  }
+
+  function buildParams() {
+    if (filter === "featured") return { featured: "true" };
+    const { from, to } = getPeriodRange(periodIndex);
+    return { createdAtFrom: from.toISOString(), createdAtTo: to.toISOString() };
+  }
+
+  const { data, isLoading, isError } = useGetItems(buildParams());
   const queryClient = useQueryClient();
 
   const { mutate: toggleItem } = usePutItemsById({
@@ -87,6 +122,22 @@ export default function DashboardPage() {
     <AppLayout>
       <div className="flex items-center gap-4 mb-4 justify-between">
         <Button onClick={() => setOpened(true)}>New</Button>
+        <Select
+          placeholder="All"
+          clearable
+          data={[
+            { value: "daily", label: "Daily" },
+            { value: "weekly", label: "Weekly" },
+            { value: "monthly", label: "Monthly" },
+            { value: "featured", label: "Featured" },
+          ]}
+          value={filter}
+          onChange={(v) => {
+            setFilter(v);
+            setPeriodIndex(0);
+          }}
+          w={140}
+        />
       </div>
 
       <Modal opened={opened} onClose={() => setOpened(false)}>
@@ -127,6 +178,21 @@ export default function DashboardPage() {
           </MantineButton>
         </Group>
       </Modal>
+
+      {filter && filter !== "featured" && (
+        <div className="flex gap-2 mb-4 flex-wrap">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <MantineButton
+              key={i}
+              variant={periodIndex === i ? "filled" : "outline"}
+              size="xs"
+              onClick={() => setPeriodIndex(i)}
+            >
+              {getPeriodLabel(i)}
+            </MantineButton>
+          ))}
+        </div>
+      )}
 
       {isLoading && <Text>Loading...</Text>}
       {isError && <Text c="red">Failed to load items.</Text>}
