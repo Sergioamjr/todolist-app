@@ -14,7 +14,7 @@ export default function Modal({
       onClose={onClose}
       className="text-dark"
       {...props}
-      size="auto"
+      size={props.size ?? "lg"}
     >
       {children}
     </MantineModal>

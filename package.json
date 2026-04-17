@@ -2,8 +2,8 @@
   "name": "gamified-todo",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"pnpm --filter todo-list-api dev\" \"pnpm --filter todo-list-web dev\"",
-    "build": "pnpm --filter todo-list-api build && pnpm --filter todo-list-web build"
+    "dev": "concurrently \"pnpm --filter todo-list-api-node dev\" \"pnpm --filter todo-list-web dev\"",
+    "build": "pnpm --filter todo-list-api-node build && pnpm --filter todo-list-web build"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

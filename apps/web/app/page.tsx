@@ -3,12 +3,9 @@
 import { useState } from "react";
 import {
   Text,
-  UnstyledButton,
-  Group,
   Button as MantineButton,
+  Group,
 } from "@mantine/core";
-import { DatePicker } from "@mantine/dates";
-import { CiCalendarDate } from "react-icons/ci";
 import { AnimatePresence, motion } from "motion/react";
 import { useQueryClient } from "@tanstack/react-query";
 import AppLayout from "@/components/AppLayout";
@@ -17,17 +14,17 @@ import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import TaskForm from "@/components/TaskForm";
 import { useGetItems, getItemsQueryKey } from "@/src/gen/hooks/useGetItems";
-import { usePatchItemsByIdToggle } from "@/src/gen/hooks/usePatchItemsByIdToggle";
+import { usePutItemsById } from "@/src/gen/hooks/usePutItemsById";
 import { useDeleteItemsById } from "@/src/gen/hooks/useDeleteItemsById";
-import dayjs from "dayjs";
-import { useDisclosure } from "@mantine/hooks";
 
 type Item = {
   id: number;
   name: string;
   description: string;
-  score: number;
+  priority: number;
   completed: boolean;
+  featured: boolean;
+  tags: string | null;
   createdAt: string;
 };
 
@@ -35,31 +32,32 @@ type EditItem = {
   id: number;
   name: string;
   description: string;
-  score: number;
+  priority: number;
   completed: boolean;
+  featured: boolean;
+  tags: string;
 };
 
 export default function DashboardPage() {
   const [opened, setOpened] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editItem, setEditItem] = useState<EditItem | null>(null);
-  const [date, setDate] = useState(dayjs());
-  const { data, isLoading, isError } = useGetItems({
-    forDate: date.toISOString(),
-  });
+  const { data, isLoading, isError } = useGetItems();
   const queryClient = useQueryClient();
-  const { mutate: toggleItem } = usePatchItemsByIdToggle({
+
+  const { mutate: toggleItem } = usePutItemsById({
     mutation: {
       onSuccess: () =>
         queryClient.invalidateQueries({ queryKey: getItemsQueryKey() }),
     },
   });
+
   const { mutate: deleteItem, isPending: isDeleting } = useDeleteItemsById();
 
   function handleDeleteConfirm() {
     if (deleteId === null) return;
     deleteItem(
-      { id: deleteId },
+      { id: String(deleteId) },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getItemsQueryKey() });
@@ -68,9 +66,6 @@ export default function DashboardPage() {
       },
     );
   }
-
-  const [datePickerOpened, { open: openDatePicker, close: closeDatePicker }] =
-    useDisclosure(false);
 
   const items: Item[] = (Array.isArray(data) ? (data as Item[]) : [])
     .slice()
@@ -81,70 +76,12 @@ export default function DashboardPage() {
       return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     });
 
-  const formatDate = (date: dayjs.Dayjs) => date.format("D MMMM");
-
-  const onChangeDate = (date: dayjs.Dayjs) => {
-    setDate(date);
-  };
-
   return (
     <AppLayout>
       <div className="flex items-center gap-4 mb-4 justify-between">
         <Button onClick={() => setOpened(true)}>New</Button>
-        <UnstyledButton onClick={openDatePicker}>
-          <CiCalendarDate className="text-gray-600 size-8" />
-        </UnstyledButton>
       </div>
-      <Modal
-        title="Select Date"
-        opened={datePickerOpened}
-        onClose={closeDatePicker}
-      >
-        <DatePicker
-          defaultDate={date.toDate()}
-          value={date.toDate()}
-          onChange={(d) => onChangeDate(dayjs(d))}
-        />
-      </Modal>
-      <div className="flex items-center mb-6 justify-center ">
-        <button onClick={() => onChangeDate(date.subtract(2, "day"))}>
-          <p className="text-dark font-medium border rounded_ p-2.5 border-gray-300 min-w-20 border-r-0">
-            {date.subtract(2, "day").format("YYYY-MM-DD") ===
-            dayjs().format("YYYY-MM-DD")
-              ? "Today"
-              : formatDate(date.subtract(2, "day"))}
-          </p>
-        </button>
-        <button onClick={() => onChangeDate(date.subtract(1, "day"))}>
-          <p className="text-dark font-medium border rounded_ p-2.5 border-gray-300 min-w-20">
-            {date.subtract(1, "day").format("YYYY-MM-DD") ===
-            dayjs().format("YYYY-MM-DD")
-              ? "Today"
-              : formatDate(date.subtract(1, "day"))}
-          </p>
-        </button>
-        <h3 className="text-center font-medium text-primary p-2.5">
-          {date.format("YYYY-MM-DD") === dayjs().format("YYYY-MM-DD")
-            ? "Today"
-            : formatDate(date)}
-        </h3>
-        <button onClick={() => onChangeDate(date.add(1, "day"))}>
-          <p className="text-dark font-medium border rounded_ p-2.5 border-gray-300 min-w-20">
-            {date.add(1, "day").format("YYYY-MM-DD") ===
-            dayjs().format("YYYY-MM-DD")
-              ? "Today"
-              : formatDate(date.add(1, "day"))}
-          </p>
-        </button>
-        <button onClick={() => onChangeDate(date.add(2, "day"))}>
-          <p className="text-dark font-medium border rounded_ p-2.5 border-gray-300 border-l-0 min-w-20">
-            {date.add(2, "day").format("YYYY-MM-DD") ===
-            dayjs().format("YYYY-MM-DD")
-              ? "Today"
-              : formatDate(date.add(2, "day"))}
-          </p>
-        </button>
-      </div>
+
       <Modal opened={opened} onClose={() => setOpened(false)}>
         <TaskForm onSuccess={() => setOpened(false)} />
       </Modal>
@@ -200,17 +137,19 @@ export default function DashboardPage() {
                 description={item.description}
                 completed={item.completed}
                 createdAt={item.createdAt}
-                score={item.score}
+                priority={item.priority}
                 onToggle={(completed) =>
-                  toggleItem({ id: item.id, data: { completed } })
+                  toggleItem({ id: String(item.id), data: { name: item.name, completed } })
                 }
                 onEdit={() =>
                   setEditItem({
                     id: item.id,
                     name: item.name,
                     description: item.description,
-                    score: item.score,
+                    priority: item.priority,
                     completed: item.completed,
+                    featured: item.featured,
+                    tags: item.tags ?? "",
                   })
                 }
                 onDelete={() => setDeleteId(item.id)}

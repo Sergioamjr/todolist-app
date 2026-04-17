@@ -9,13 +9,13 @@ type TaskProps = {
   description: string;
   completed: boolean;
   createdAt: string;
-  score: number;
+  priority: number;
   onToggle?: (completed: boolean) => void;
   onEdit?: () => void;
   onDelete?: () => void;
 };
 
-export default function Task({ name, description, completed: initialCompleted, createdAt, score, onToggle, onEdit, onDelete }: TaskProps) {
+export default function Task({ name, description, completed: initialCompleted, createdAt, priority, onToggle, onEdit, onDelete }: TaskProps) {
   const [completed, setCompleted] = useState(initialCompleted);
 
   function handleChange() {
@@ -40,7 +40,7 @@ export default function Task({ name, description, completed: initialCompleted, c
       </div>
       <div className="flex flex-col items-end gap-1 shrink-0">
         <span className="text-xs text-gray-400">{createdAt}</span>
-        <span className="text-xs font-semibold text-primary">Score {score}/5</span>
+        <span className="text-xs font-semibold text-primary">Priority {priority}/5</span>
       </div>
       <Menu shadow="md" width={160} position="bottom-end">
         <Menu.Target>
