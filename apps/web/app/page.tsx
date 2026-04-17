@@ -1,11 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Text,
-  Button as MantineButton,
-  Group,
-} from "@mantine/core";
+import { useState, useEffect } from "react";
+import { Text, Button as MantineButton, Group } from "@mantine/core";
 import { AnimatePresence, motion } from "motion/react";
 import { useQueryClient } from "@tanstack/react-query";
 import AppLayout from "@/components/AppLayout";
@@ -13,6 +9,8 @@ import Task from "@/components/Task";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import TaskForm from "@/components/TaskForm";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 import { useGetItems, getItemsQueryKey } from "@/src/gen/hooks/useGetItems";
 import { usePutItemsById } from "@/src/gen/hooks/usePutItemsById";
 import { useDeleteItemsById } from "@/src/gen/hooks/useDeleteItemsById";
@@ -42,6 +40,9 @@ export default function DashboardPage() {
   const [opened, setOpened] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editItem, setEditItem] = useState<EditItem | null>(null);
+  const router = useRouter();
+  const { data: session, isPending: isSessionPending } =
+    authClient.useSession();
   const { data, isLoading, isError } = useGetItems();
   const queryClient = useQueryClient();
 
@@ -75,6 +76,12 @@ export default function DashboardPage() {
       if (aC !== bC) return aC - bC;
       return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     });
+
+  useEffect(() => {
+    if (!isSessionPending && session) {
+      router.replace("/");
+    }
+  }, [isSessionPending, session, router]);
 
   return (
     <AppLayout>
@@ -123,6 +130,11 @@ export default function DashboardPage() {
 
       {isLoading && <Text>Loading...</Text>}
       {isError && <Text c="red">Failed to load items.</Text>}
+      {!isLoading && !isError && items.length === 0 && (
+        <Text className="text-center text-accent!">
+          No tasks found. Create your first task!!!!
+        </Text>
+      )}
 
       <motion.div layout className="flex flex-col gap-3">
         <AnimatePresence initial={false}>
@@ -139,7 +151,10 @@ export default function DashboardPage() {
                 createdAt={item.createdAt}
                 priority={item.priority}
                 onToggle={(completed) =>
-                  toggleItem({ id: String(item.id), data: { name: item.name, completed } })
+                  toggleItem({
+                    id: String(item.id),
+                    data: { name: item.name, completed },
+                  })
                 }
                 onEdit={() =>
                   setEditItem({

@@ -1,13 +1,23 @@
 "use client";
 
-import { useState } from "react";
-import { TextInput, PasswordInput, Button, Paper, Title, Text, Anchor } from "@mantine/core";
+import { useEffect, useState } from "react";
+import {
+  TextInput,
+  PasswordInput,
+  Button,
+  Paper,
+  Title,
+  Text,
+  Anchor,
+} from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import AppLayout from "@/components/AppLayout";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { data: session, isPending: isSessionPending } =
+    authClient.useSession();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -27,12 +37,12 @@ export default function LoginPage() {
     setMode((m) => (m === "signin" ? "signup" : "signin"));
   }
 
- const loginWithGoogle = async () => {
+  const loginWithGoogle = async () => {
     await authClient.signIn.social({
       provider: "google",
       callbackURL: process.env.NEXT_PUBLIC_REDIRECT_URL,
     });
-  }
+  };
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -59,6 +69,12 @@ export default function LoginPage() {
 
     setLoading(false);
   }
+
+  useEffect(() => {
+    if (!isSessionPending && session) {
+      router.replace("/");
+    }
+  }, [isSessionPending, session, router]);
 
   return (
     <AppLayout>
@@ -104,8 +120,14 @@ export default function LoginPage() {
           </form>
 
           <Text size="sm" ta="center" c="dimmed">
-            {mode === "signin" ? "Don't have an account? " : "Already have an account? "}
-            <Anchor size="sm" onClick={toggleMode} style={{ cursor: "pointer" }}>
+            {mode === "signin"
+              ? "Don't have an account? "
+              : "Already have an account? "}
+            <Anchor
+              size="sm"
+              onClick={toggleMode}
+              style={{ cursor: "pointer" }}
+            >
               {mode === "signin" ? "Create account" : "Sign in"}
             </Anchor>
           </Text>
