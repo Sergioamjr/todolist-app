@@ -38,16 +38,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
 
       - name: Install dependencies
-        run: bun install
+        run: pnpm install --frozen-lockfile
 
       - name: Fetch OpenAPI spec from deployed API
         run: |
@@ -57,7 +54,7 @@ jobs:
             -o apps/web/openapi.json
 
       - name: Generate Kubb types and hooks
-        run: bun run --cwd apps/web generate
+        run: pnpm --filter todo-list-web generate
         env:
           API_URL: ${{ needs.deploy-api.outputs.api_url }}
 
@@ -65,23 +62,23 @@ jobs:
         run: npm install -g vercel@latest
 
       - name: Pull Vercel project settings
-        run: vercel pull --yes --environment=production --cwd apps/web --token=${{ secrets.VERCEL_TOKEN }}
+        run: cd apps/web && vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_UI }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID_UI }}
 
       - name: Build web (via Vercel, prebuilt)
-        run: vercel build --prod --cwd apps/web --token=${{ secrets.VERCEL_TOKEN }}
+        run: cd apps/web && vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_UI }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID_UI }}
           NEXT_PUBLIC_API_URL: ${{ needs.deploy-api.outputs.api_url }}
 
       - name: Install Playwright browsers
-        run: bunx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Run Playwright tests
-        run: bun run --cwd apps/web test
+        run: pnpm --filter todo-list-web test
         env:
           CI: true
           NEXT_PUBLIC_API_URL: ${{ needs.deploy-api.outputs.api_url }}
@@ -95,7 +92,7 @@ jobs:
           retention-days: 7
 
       - name: Deploy Web
-        run: vercel deploy --prebuilt --prod --cwd apps/web --token=${{ secrets.VERCEL_TOKEN }}
+        run: cd apps/web && vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_UI }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID_UI }}
