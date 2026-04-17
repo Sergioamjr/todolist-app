@@ -50,7 +50,7 @@ jobs:
         run: npm install -g vercel@latest
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm --filter todo-list-web exec playwright install --with-deps chromium
 
       - name: Run Playwright tests
         run: pnpm --filter todo-list-web test
