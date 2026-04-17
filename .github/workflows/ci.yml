@@ -61,19 +61,6 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
-      - name: Pull Vercel project settings
-        run: cd apps/web && vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_UI }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID_UI }}
-
-      - name: Build web (via Vercel, prebuilt)
-        run: cd apps/web && vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_UI }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID_UI }}
-          NEXT_PUBLIC_API_URL: ${{ needs.deploy-api.outputs.api_url }}
-
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 
@@ -92,7 +79,7 @@ jobs:
           retention-days: 7
 
       - name: Deploy Web
-        run: cd apps/web && vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prod --cwd apps/web --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_UI }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID_UI }}
