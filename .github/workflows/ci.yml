@@ -50,9 +50,14 @@ jobs:
         env:
           API_URL: ${{ needs.deploy-api.outputs.api_url }}
 
-      - name: Build web
-        run: bun run --cwd apps/web build
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Build web (via Vercel, prebuilt)
+        run: vercel build --prod --cwd apps/web --token=${{ secrets.VERCEL_TOKEN }}
         env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_UI }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID_UI }}
           NEXT_PUBLIC_API_URL: ${{ needs.deploy-api.outputs.api_url }}
 
       - name: Install Playwright browsers
@@ -72,11 +77,8 @@ jobs:
           path: apps/web/playwright-report/
           retention-days: 7
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel@latest
-
       - name: Deploy Web
-        run: vercel deploy --prod --cwd apps/web --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --prod --cwd apps/web --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_UI }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID_UI }}
