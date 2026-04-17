@@ -1,10 +1,9 @@
 {
   "name": "gamified-todo",
   "private": true,
-  "workspaces": ["apps/*"],
   "scripts": {
-    "dev": "concurrently \"bun run --cwd apps/api dev\" \"bun run --cwd apps/web dev\"",
-    "build": "bun run --cwd apps/api build && bun run --cwd apps/web build"
+    "dev": "concurrently \"pnpm --filter todo-list-api dev\" \"pnpm --filter todo-list-web dev\"",
+    "build": "pnpm --filter todo-list-api build && pnpm --filter todo-list-web build"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

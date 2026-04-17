@@ -8,24 +8,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Commands
 
-All commands use **Bun** as the package manager and runtime.
+All commands use **pnpm** as the package manager.
 
 ```bash
 # Run both apps concurrently (from root)
-bun run dev
+pnpm dev
 
 # Run individually
-bun run --cwd apps/api dev     # API on http://localhost:3001
-bun run --cwd apps/web dev     # Next.js frontend
+pnpm --filter todo-list-api dev     # API on http://localhost:3001
+pnpm --filter todo-list-web dev     # Next.js frontend
 
 # Build frontend
-bun run --cwd apps/web build
+pnpm --filter todo-list-web build
 
 # Lint frontend
-bun run --cwd apps/web lint
+pnpm --filter todo-list-web lint
 ```
 
-Install dependencies from root: `bun install`
+Install dependencies from root: `pnpm install`
 
 ## Architecture
 

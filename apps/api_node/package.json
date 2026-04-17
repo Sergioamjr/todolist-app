@@ -1,0 +1,38 @@
+{
+  "name": "todo-list-api-node",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --loader ts-node/esm src/index.ts",
+    "start": "node --loader ts-node/esm src/index.ts",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --config jest.config.cjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.33.0",
+  "dependencies": {
+    "@elysiajs/cors": "^1.4.1",
+    "@elysiajs/node": "^1.4.5",
+    "@elysiajs/swagger": "^1.3.1",
+    "@libsql/client": "^0.17.2",
+    "@libsql/kysely-libsql": "^0.4.1",
+    "better-auth": "^1.6.5",
+    "better-sqlite3": "^12.9.0",
+    "dotenv": "^17.4.2",
+    "elysia": "^1.4.28",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.28"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.19.39",
+    "@types/supertest": "^7.2.0",
+    "jest": "^30.3.0",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
+  }
+}

@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun run --run next dev",
-    "build": "bun run --run next build",
-    "start": "bun run --run next start",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
     "lint": "eslint",
-    "generate": "bun --env-file=.env.local run kubb generate",
+    "generate": "dotenv -e .env.local -- kubb generate",
     "postgenerate": "bash scripts/postgenerate.sh",
     "sync-api": "curl http://localhost:3001/swagger/json > openapi.json && bun run generate"
   },
@@ -28,6 +28,7 @@
     "yup": "^1.7.1"
   },
   "devDependencies": {
+    "dotenv-cli": "^8.0.0",
     "@kubb/cli": "^4.37.0",
     "@kubb/core": "^4.37.0",
     "@kubb/plugin-client": "^4.37.0",
