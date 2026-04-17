@@ -1,5 +1,6 @@
 "use client";
 
+import dayjs from "dayjs";
 import { useState } from "react";
 import { Menu } from "@mantine/core";
 import { BsThreeDots } from "react-icons/bs";
@@ -15,7 +16,16 @@ type TaskProps = {
   onDelete?: () => void;
 };
 
-export default function Task({ name, description, completed: initialCompleted, createdAt, priority, onToggle, onEdit, onDelete }: TaskProps) {
+export default function Task({
+  name,
+  description,
+  completed: initialCompleted,
+  createdAt,
+  priority,
+  onToggle,
+  onEdit,
+  onDelete,
+}: TaskProps) {
   const [completed, setCompleted] = useState(initialCompleted);
 
   function handleChange() {
@@ -33,24 +43,37 @@ export default function Task({ name, description, completed: initialCompleted, c
         className="h-4 w-4 accent-primary cursor-pointer shrink-0"
       />
       <div className="flex-1 min-w-0">
-        <p className={`font-medium text-dark ${completed ? "line-through text-gray-400" : ""}`}>
+        <p
+          className={`font-medium text-dark ${completed ? "line-through text-gray-400" : ""}`}
+        >
           {name}
         </p>
         <p className="text-sm text-gray-500 mt-0.5">{description}</p>
       </div>
       <div className="flex flex-col items-end gap-1 shrink-0">
-        <span className="text-xs text-gray-400">{createdAt}</span>
-        <span className="text-xs font-semibold text-primary">Priority {priority}/5</span>
+        {createdAt && (
+          <span className="text-xs text-gray-400">
+            {dayjs(createdAt).format("DD/MM/YYYY")}
+          </span>
+        )}
+        <span className="text-xs font-semibold text-primary">
+          Priority {priority}/5
+        </span>
       </div>
       <Menu shadow="md" width={160} position="bottom-end">
         <Menu.Target>
-          <button type="button" className="p-1 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer">
+          <button
+            type="button"
+            className="p-1 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer"
+          >
             <BsThreeDots size={16} />
           </button>
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Item onClick={onEdit}>Edit task</Menu.Item>
-          <Menu.Item color="red" onClick={onDelete}>Delete task</Menu.Item>
+          <Menu.Item color="red" onClick={onDelete}>
+            Delete task
+          </Menu.Item>
         </Menu.Dropdown>
       </Menu>
     </div>

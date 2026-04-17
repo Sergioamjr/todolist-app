@@ -24,6 +24,10 @@ export type GetItemsQueryParams = {
     /**
      * @type string | undefined
     */
+    createdAt?: string;
+    /**
+     * @type string | undefined
+    */
     createdAtFrom?: string;
     /**
      * @type string | undefined

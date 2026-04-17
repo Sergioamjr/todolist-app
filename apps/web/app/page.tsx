@@ -1,7 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Text, Button as MantineButton, Group, Select } from "@mantine/core";
+import {
+  Text,
+  Button as MantineButton,
+  Group,
+  Select,
+  ActionIcon,
+} from "@mantine/core";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import dayjs from "dayjs";
 import { AnimatePresence, motion } from "motion/react";
 import { useQueryClient } from "@tanstack/react-query";
 import AppLayout from "@/components/AppLayout";
@@ -41,41 +49,63 @@ export default function DashboardPage() {
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editItem, setEditItem] = useState<EditItem | null>(null);
   const [filter, setFilter] = useState<string | null>(null);
-  const [periodIndex, setPeriodIndex] = useState(0);
+  const [anchorDate, setAnchorDate] = useState<Date>(() =>
+    startOfDay(new Date()),
+  );
+  const [selectedDate, setSelectedDate] = useState<Date>(() =>
+    startOfDay(new Date()),
+  );
+
+  console.log({ anchorDate, selectedDate });
   const router = useRouter();
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
 
-  function getPeriodRange(index: number): { from: Date; to: Date } {
-    const now = new Date();
-    if (filter === "weekly") {
-      const startOfWeek = new Date(now);
-      startOfWeek.setDate(now.getDate() - now.getDay());
-      startOfWeek.setHours(0, 0, 0, 0);
-      const from = new Date(startOfWeek);
-      from.setDate(from.getDate() - index * 7);
-      const to = new Date(from);
-      to.setDate(to.getDate() + 7);
-      return { from, to };
-    }
-    if (filter === "monthly") {
-      const from = new Date(now.getFullYear(), now.getMonth() - index, 1);
-      const to = new Date(now.getFullYear(), now.getMonth() - index + 1, 1);
-      return { from, to };
-    }
-    // daily (default)
-    const from = new Date(now);
-    from.setDate(from.getDate() - index);
-    from.setHours(0, 0, 0, 0);
-    const to = new Date(from);
-    to.setHours(23, 59, 59, 999);
-    return { from, to };
+  function startOfDay(d: Date) {
+    const n = new Date(d);
+    n.setHours(0, 0, 0, 0);
+    return n;
+  }
+  function endOfDay(d: Date) {
+    const n = new Date(d);
+    n.setHours(23, 59, 59, 999);
+    return n;
+  }
+
+  function getDayLabel(d: Date) {
+    return d.toLocaleDateString("en", { day: "2-digit", month: "short" });
+  }
+
+  function goBack() {
+    const d = new Date(anchorDate);
+    d.setDate(d.getDate() - 1);
+    setAnchorDate(d);
+    setSelectedDate(d);
+  }
+
+  function goForward() {
+    const todayStart = startOfDay(new Date());
+    if (anchorDate >= todayStart) return;
+    const d = new Date(anchorDate);
+    d.setDate(d.getDate() + 1);
+    setAnchorDate(d);
+    setSelectedDate(d);
+  }
+
+  function getPeriodRange(date: Date): { from: Date; to: Date } {
+    return { from: startOfDay(date), to: endOfDay(date) };
   }
 
   function buildParams() {
     if (filter === "featured") return { featured: "true" };
-    const { from, to } = getPeriodRange(periodIndex);
-    return { createdAtFrom: from.toISOString(), createdAtTo: to.toISOString() };
+    if (filter === "weekly" || filter === "monthly") {
+      const { from, to } = getPeriodRange(selectedDate);
+      return {
+        createdAtFrom: from.toISOString(),
+        createdAtTo: to.toISOString(),
+      };
+    }
+    return { createdAt: selectedDate.toISOString().substring(0, 10) };
   }
 
   const { data, isLoading, isError } = useGetItems(buildParams());
@@ -134,7 +164,8 @@ export default function DashboardPage() {
           value={filter}
           onChange={(v) => {
             setFilter(v);
-            setPeriodIndex(0);
+            setAnchorDate(startOfDay(new Date()));
+            setSelectedDate(startOfDay(new Date()));
           }}
           w={140}
         />
@@ -180,17 +211,40 @@ export default function DashboardPage() {
       </Modal>
 
       {filter && filter !== "featured" && (
-        <div className="flex gap-2 mb-4 flex-wrap">
-          {[0, 1, 2, 3, 4].map((i) => (
-            <MantineButton
-              key={i}
-              variant={periodIndex === i ? "filled" : "outline"}
-              size="xs"
-              onClick={() => setPeriodIndex(i)}
-            >
-              {getPeriodLabel(i)}
-            </MantineButton>
-          ))}
+        <div className="flex items-center gap-2 mb-4 justify-center">
+          <ActionIcon variant="subtle" onClick={goBack}>
+            <FiChevronLeft />
+          </ActionIcon>
+
+          {[4, 3, 2, 1, 0].map((offset) => {
+            const d = new Date(anchorDate);
+            d.setDate(d.getDate() - offset);
+            const isSelected = d.toDateString() === selectedDate.toDateString();
+            return (
+              <MantineButton
+                key={offset}
+                variant={isSelected ? "filled" : "outline"}
+                size="xs"
+                onClick={() => {
+                  setAnchorDate(d);
+                  setSelectedDate(d);
+                }}
+              >
+                {getDayLabel(d)}
+              </MantineButton>
+            );
+          })}
+
+          <ActionIcon
+            variant="subtle"
+            disabled={
+              anchorDate.toDateString() ===
+              startOfDay(new Date()).toDateString()
+            }
+            onClick={goForward}
+          >
+            <FiChevronRight />
+          </ActionIcon>
         </div>
       )}
 

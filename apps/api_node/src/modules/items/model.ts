@@ -18,6 +18,7 @@ export const ItemQuery = t.Object({
   priority: t.Optional(t.String()),
   tags: t.Optional(t.String()),
   featured: t.Optional(t.String()),
+  createdAt: t.Optional(t.String()),
   createdAtFrom: t.Optional(t.String()),
   createdAtTo: t.Optional(t.String()),
 });
