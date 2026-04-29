@@ -10,8 +10,13 @@ export async function proxy(request: NextRequest) {
   const cookieStore = await cookies();
   const token = cookieStore.get("better-auth.session_token");
   const isLoginPage = request.nextUrl.pathname === "/login";
+  console.log("proxy", {
+    token,
+    isLoginPage,
+  });
 
   if (!token && !isLoginPage) {
+    console.log("sending to login");
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
