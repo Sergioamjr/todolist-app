@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   TextInput,
   PasswordInput,
@@ -69,7 +69,7 @@ export default function LoginPage() {
   }
 
   return (
-    <AppLayout>
+    <AppLayout withoutLogout>
       <div className="flex items-center justify-center py-16">
         <Paper shadow="sm" p="xl" radius="md" w={360}>
           <Title order={3} mb="xs">

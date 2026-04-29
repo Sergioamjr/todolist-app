@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Text,
   Button as MantineButton,
@@ -16,8 +16,7 @@ import Task from "@/components/Task";
 import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import TaskForm from "@/components/TaskForm";
-import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { useServerSession } from "@/components/SessionProvider";
 import { useGetItems, getItemsQueryKey } from "@/src/gen/hooks/useGetItems";
 import { usePutItemsById } from "@/src/gen/hooks/usePutItemsById";
 import { useDeleteItemsById } from "@/src/gen/hooks/useDeleteItemsById";
@@ -55,9 +54,7 @@ export default function DashboardPage() {
     startOfDay(new Date()),
   );
 
-  const router = useRouter();
-  const { data: session, isPending: isSessionPending } =
-    authClient.useSession();
+  const session = useServerSession();
 
   function startOfDay(d: Date) {
     const n = new Date(d);
@@ -140,11 +137,6 @@ export default function DashboardPage() {
       return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     });
 
-  useEffect(() => {
-    if (!isSessionPending && session) {
-      router.replace("/");
-    }
-  }, [isSessionPending, session, router]);
 
   return (
     <AppLayout>

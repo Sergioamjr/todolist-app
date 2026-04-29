@@ -1,15 +1,12 @@
-import Header from "../Header";
+import Header, { HeaderProps } from "../Header";
+import { PropsWithChildren } from "react";
 
-export default function AppLayout({
-  children,
-  userName,
-}: {
-  children: React.ReactNode;
-  userName?: string;
-}) {
+type AppLayoutProps = PropsWithChildren<HeaderProps>;
+
+export default function AppLayout({ children, withoutLogout }: AppLayoutProps) {
   return (
     <div className="min-h-screen bg-white">
-      <Header userName={userName} />
+      {!withoutLogout && <Header withoutLogout={withoutLogout} />}
       <main className="container mx-auto px-4 py-6">{children}</main>
     </div>
   );
