@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 // };
 
 export async function proxy(request: NextRequest) {
+  // __Secure-better-auth.session_token
   // const cookieStore = await cookies();
   // const token = cookieStore.get("better-auth.session_token");
   // const isLoginPage = request.nextUrl.pathname === "/login";

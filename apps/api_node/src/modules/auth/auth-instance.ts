@@ -41,7 +41,7 @@ export const auth = betterAuth({
     },
   },
   baseURL: process.env.BETTER_AUTH_URL,
-  trustedOrigins: [process.env.UI_URL ?? "", "http://localhost:3000"],
+  trustedOrigins: [process.env.UI_URL ?? "", "http://localhost:3000", "http://localhost:3001"],
   account: {
     skipStateCookieCheck: true,
   },
