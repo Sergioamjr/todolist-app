@@ -16,8 +16,6 @@ import AppLayout from "@/components/AppLayout";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { data: session, isPending: isSessionPending } =
-    authClient.useSession();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -69,12 +67,6 @@ export default function LoginPage() {
 
     setLoading(false);
   }
-
-  useEffect(() => {
-    if (!isSessionPending && session) {
-      router.replace("/");
-    }
-  }, [isSessionPending, session, router]);
 
   return (
     <AppLayout>

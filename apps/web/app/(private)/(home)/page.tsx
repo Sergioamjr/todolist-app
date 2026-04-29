@@ -9,7 +9,6 @@ import {
   ActionIcon,
 } from "@mantine/core";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import dayjs from "dayjs";
 import { AnimatePresence, motion } from "motion/react";
 import { useQueryClient } from "@tanstack/react-query";
 import AppLayout from "@/components/AppLayout";
@@ -56,7 +55,6 @@ export default function DashboardPage() {
     startOfDay(new Date()),
   );
 
-  console.log({ anchorDate, selectedDate });
   const router = useRouter();
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
