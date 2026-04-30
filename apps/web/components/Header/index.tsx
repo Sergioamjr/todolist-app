@@ -24,6 +24,9 @@ export default function Header({ withoutLogout }: HeaderProps) {
           console.log("cookie removed 2, redirecting to login...");
           router.push("/login");
         },
+        onError: (ctx) => {
+          console.error("Error signing out:", ctx.error);
+        },
       },
     });
   }
