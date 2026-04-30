@@ -17,8 +17,11 @@ export default function Header({ withoutLogout }: HeaderProps) {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: async () => {
+          console.log("onsuccess");
           await removeCookieAction("better-auth.session_token");
+          console.log("cookie removed 1");
           await removeCookieAction("__Secure-better-auth.session_token");
+          console.log("cookie removed 2, redirecting to login...");
           router.push("/login");
         },
       },
