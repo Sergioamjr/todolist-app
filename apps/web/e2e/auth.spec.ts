@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 const EMAIL = process.env.E2E_EMAIL ?? "test@example.com";
 const PASSWORD = process.env.E2E_PASSWORD ?? "password123";
 
-test.skip("login and access home page", async ({ page }) => {
+test("login and access home page", async ({ page }) => {
   await page.goto("/login");
 
   await page.getByLabel("Email").fill(EMAIL);
