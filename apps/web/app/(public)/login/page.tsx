@@ -48,11 +48,18 @@ export default function LoginPage() {
     setLoading(true);
 
     if (mode === "signin") {
+      console.log("signing...", email, password);
       await authClient.signIn.email(
         { email, password, callbackURL: "/" },
         {
-          onSuccess: () => router.push("/"),
-          onError: (ctx) => setError(ctx.error.message),
+          onSuccess: () => {
+            console.log("@@@ success");
+            router.push("/");
+          },
+          onError: (ctx) => {
+            console.log("@@@ error", ctx.error);
+            setError(ctx.error.message);
+          },
         },
       );
     } else {
