@@ -56,7 +56,9 @@ jobs:
         run: pnpm --filter todo-list-web test
         env:
           CI: true
+          NEXT_PUBLIC_API_URL: ${{ needs.deploy-api.outputs.api_url }}
           API_URL: ${{ needs.deploy-api.outputs.api_url }}
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
 
       - name: Upload Playwright report
         if: always()
