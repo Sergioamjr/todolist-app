@@ -14,19 +14,15 @@ export default function Header({ withoutLogout }: HeaderProps) {
   const session = useServerSession();
 
   async function handleSignOut() {
-    try {
-      removeCookieAction("better-auth.session_token");
-    } catch {
-      console.log('Error removing cookie "better-auth.session_token"');
-    }
-    try {
-      removeCookieAction("__Secure-better-auth.session_token");
-    } catch {
-      console.log('Error removing cookie "__Secure-better-auth.session_token"');
-    }
-    console.log("signout");
-    await authClient.signOut();
-    router.push("/login");
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: async () => {
+          await removeCookieAction("better-auth.session_token");
+          await removeCookieAction("__Secure-better-auth.session_token");
+          router.push("/login");
+        },
+      },
+    });
   }
 
   return (

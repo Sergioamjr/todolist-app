@@ -1,18 +1,17 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { cookies } from "next/headers";
 
 export const config = {
   matcher: ["/", "/login", "/dashboard"],
 };
 
-export async function proxy(request: NextRequest) {
-  // __Secure-better-auth.session_token
-  const cookieStore = await cookies();
+export function proxy(request: NextRequest) {
   const token =
-    cookieStore.get("better-auth.session_token") ??
-    cookieStore.get("__Secure-better-auth.session_token");
+    request.cookies.get("better-auth.session_token") ??
+    request.cookies.get("__Secure-better-auth.session_token");
+
   const isLoginPage = request.nextUrl.pathname === "/login";
+  console.log("token", { token, isLoginPage });
 
   if (!token && !isLoginPage) {
     return NextResponse.redirect(new URL("/login", request.url));
