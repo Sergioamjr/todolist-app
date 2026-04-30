@@ -5,11 +5,11 @@ export { auth };
 export const authGuard = new Elysia({ name: "auth-guard" })
   .derive({ as: "scoped" }, async ({ request }) => {
     const session = await auth.api.getSession({ headers: request.headers });
-    return { userId: session?.user.id ?? "user-id" };
+    return { userId: session?.user.id };
   })
   .onBeforeHandle({ as: "scoped" }, ({ userId, set }) => {
-    // if (!userId) {
-    //   set.status = 401;
-    //   return "Unauthorized";
-    // }
+    if (!userId) {
+      set.status = 401;
+      return "Unauthorized";
+    }
   });
