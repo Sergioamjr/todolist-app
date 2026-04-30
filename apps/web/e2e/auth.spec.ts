@@ -10,6 +10,6 @@ test("login and access home page", async ({ page }) => {
   await page.getByLabel("Password").fill(PASSWORD);
   await page.getByRole("button", { name: "Sign in" }).click();
 
-  // await expect(page).toHaveURL("/");
-  // await expect(page.getByRole("button", { name: "New" })).toBeVisible();
+  await expect(page).toHaveURL("/", { timeout: 10000 });
+  await expect(page.getByRole("button", { name: "New" })).toBeVisible();
 });
