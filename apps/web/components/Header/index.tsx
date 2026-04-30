@@ -15,6 +15,7 @@ export default function Header({ withoutLogout }: HeaderProps) {
 
   async function handleSignOut() {
     removeCookieAction("better-auth.session_token");
+    removeCookieAction("__Secure-better-auth.session_token");
     await authClient.signOut();
     router.push("/login");
   }
