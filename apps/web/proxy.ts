@@ -11,7 +11,7 @@ export async function proxy(request: NextRequest) {
   const cookieStore = await cookies();
   const token =
     cookieStore.get("better-auth.session_token") ??
-    cookieStore.get("__Secure-better-auth.session_token")?.value;
+    cookieStore.get("__Secure-better-auth.session_token");
   const isLoginPage = request.nextUrl.pathname === "/login";
 
   if (!token && !isLoginPage) {
