@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Text,
-  Button as MantineButton,
-  Group,
-  Select,
-  ActionIcon,
-} from "@mantine/core";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { Text, Button as MantineButton, Group, Select } from "@mantine/core";
 import { AnimatePresence, motion } from "motion/react";
 import { useQueryClient } from "@tanstack/react-query";
 import AppLayout from "@/components/AppLayout";
@@ -20,6 +13,8 @@ import { useServerSession } from "@/components/SessionProvider";
 import { useGetItems, getItemsQueryKey } from "@/src/gen/hooks/useGetItems";
 import { usePutItemsById } from "@/src/gen/hooks/usePutItemsById";
 import { useDeleteItemsById } from "@/src/gen/hooks/useDeleteItemsById";
+import dayjs from "dayjs";
+import _ from "lodash";
 
 type Item = {
   id: number;
@@ -46,61 +41,37 @@ export default function DashboardPage() {
   const [opened, setOpened] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editItem, setEditItem] = useState<EditItem | null>(null);
-  const [filter, setFilter] = useState<string | null>(null);
-  const [anchorDate, setAnchorDate] = useState<Date>(() =>
-    startOfDay(new Date()),
-  );
-  const [selectedDate, setSelectedDate] = useState<Date>(() =>
-    startOfDay(new Date()),
-  );
+  // const [filter, setFilter] = useState<string | null>(null);
 
   const session = useServerSession();
 
-  function startOfDay(d: Date) {
+  const startOfDay = (d: Date) => {
     const n = new Date(d);
     n.setHours(0, 0, 0, 0);
     return n;
-  }
-  function endOfDay(d: Date) {
+  };
+  const endOfDay = (d: Date) => {
     const n = new Date(d);
     n.setHours(23, 59, 59, 999);
     return n;
-  }
+  };
 
-  function getDayLabel(d: Date) {
-    return d.toLocaleDateString("en", { day: "2-digit", month: "short" });
-  }
+  const startOfWeek = (d: Date) => {
+    return dayjs(d).startOf("week").toDate();
+  };
 
-  function goBack() {
-    const d = new Date(anchorDate);
-    d.setDate(d.getDate() - 1);
-    setAnchorDate(d);
-    setSelectedDate(d);
-  }
-
-  function goForward() {
-    const todayStart = startOfDay(new Date());
-    if (anchorDate >= todayStart) return;
-    const d = new Date(anchorDate);
-    d.setDate(d.getDate() + 1);
-    setAnchorDate(d);
-    setSelectedDate(d);
-  }
+  const selectedDate = startOfDay(new Date());
 
   function getPeriodRange(date: Date): { from: Date; to: Date } {
-    return { from: startOfDay(date), to: endOfDay(date) };
+    return { from: startOfWeek(date), to: endOfDay(date) };
   }
 
   function buildParams() {
-    if (filter === "featured") return { featured: "true" };
-    if (filter === "weekly" || filter === "monthly") {
-      const { from, to } = getPeriodRange(selectedDate);
-      return {
-        createdAtFrom: from.toISOString(),
-        createdAtTo: to.toISOString(),
-      };
-    }
-    return { createdAt: selectedDate.toISOString().substring(0, 10) };
+    const { from, to } = getPeriodRange(selectedDate);
+    return {
+      createdAtFrom: from.toISOString().substring(0, 10),
+      createdAtTo: to.toISOString().substring(0, 10),
+    };
   }
 
   const { data, isLoading, isError } = useGetItems(buildParams());
@@ -137,28 +108,24 @@ export default function DashboardPage() {
       return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     });
 
+  console.log("items", items);
+
+  const formattedItems: Record<string, Item[]> = items.reduce((acc, cur) => {
+    const date = cur.createdAt.substring(0, 10);
+    const items = _.get(acc, date, []);
+
+    return {
+      ...acc,
+      [date]: [...items, cur],
+    };
+  }, {});
+
+  console.log("formattedItems", formattedItems);
 
   return (
     <AppLayout>
       <div className="flex items-center gap-4 mb-4 justify-between">
         <Button onClick={() => setOpened(true)}>New</Button>
-        <Select
-          placeholder="All"
-          clearable
-          data={[
-            { value: "daily", label: "Daily" },
-            { value: "weekly", label: "Weekly" },
-            { value: "monthly", label: "Monthly" },
-            { value: "featured", label: "Featured" },
-          ]}
-          value={filter}
-          onChange={(v) => {
-            setFilter(v);
-            setAnchorDate(startOfDay(new Date()));
-            setSelectedDate(startOfDay(new Date()));
-          }}
-          w={140}
-        />
       </div>
 
       <Modal opened={opened} onClose={() => setOpened(false)}>
@@ -200,89 +167,63 @@ export default function DashboardPage() {
         </Group>
       </Modal>
 
-      {filter && filter !== "featured" && (
-        <div className="flex items-center gap-2 mb-4 justify-center">
-          <ActionIcon variant="subtle" onClick={goBack}>
-            <FiChevronLeft />
-          </ActionIcon>
-
-          {[4, 3, 2, 1, 0].map((offset) => {
-            const d = new Date(anchorDate);
-            d.setDate(d.getDate() - offset);
-            const isSelected = d.toDateString() === selectedDate.toDateString();
-            return (
-              <MantineButton
-                key={offset}
-                variant={isSelected ? "filled" : "outline"}
-                size="xs"
-                onClick={() => {
-                  setAnchorDate(d);
-                  setSelectedDate(d);
-                }}
-              >
-                {getDayLabel(d)}
-              </MantineButton>
-            );
-          })}
-
-          <ActionIcon
-            variant="subtle"
-            disabled={
-              anchorDate.toDateString() ===
-              startOfDay(new Date()).toDateString()
-            }
-            onClick={goForward}
-          >
-            <FiChevronRight />
-          </ActionIcon>
-        </div>
-      )}
-
       {isLoading && <Text>Loading...</Text>}
       {isError && <Text c="red">Failed to load items.</Text>}
       {!isLoading && !isError && items.length === 0 && (
         <Text className="text-center text-accent!">
-          No tasks found. Create your first task!!!!
+          What are your plans today?
         </Text>
       )}
 
-      <motion.div layout className="flex flex-col gap-3">
-        <AnimatePresence initial={false}>
-          {items.map((item) => (
-            <motion.div
-              key={item.id}
-              layout
-              transition={{ duration: 0.35, ease: "easeInOut" }}
-            >
-              <Task
-                name={item.name}
-                description={item.description}
-                completed={item.completed}
-                createdAt={item.createdAt}
-                priority={item.priority}
-                onToggle={(completed) =>
-                  toggleItem({
-                    id: String(item.id),
-                    data: { name: item.name, completed },
-                  })
-                }
-                onEdit={() =>
-                  setEditItem({
-                    id: item.id,
-                    name: item.name,
-                    description: item.description,
-                    priority: item.priority,
-                    completed: item.completed,
-                    featured: item.featured,
-                    tags: item.tags ?? "",
-                  })
-                }
-                onDelete={() => setDeleteId(item.id)}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </motion.div>
+      <div className="flex flex-col gap-3">
+        {Object.entries(formattedItems).map(([k, items]) => {
+          return (
+            <div key={k}>
+              <p className="sticky top-8 text-dark ">
+                {dayjs(k).format("DD/MM/YYYY")}
+              </p>
+              <AnimatePresence initial={false}>
+                {items.map((item) => {
+                  return (
+                    <motion.div
+                      key={item.id}
+                      layout
+                      className="mb-3 last-of-type:mb-0"
+                      transition={{ duration: 0.35, ease: "easeInOut" }}
+                    >
+                      <Task
+                        name={item.name}
+                        description={item.description}
+                        completed={item.completed}
+                        createdAt={item.createdAt}
+                        priority={item.priority}
+                        onToggle={(completed) =>
+                          toggleItem({
+                            id: String(item.id),
+                            data: { name: item.name, completed },
+                          })
+                        }
+                        onEdit={() =>
+                          setEditItem({
+                            id: item.id,
+                            name: item.name,
+                            description: item.description,
+                            priority: item.priority,
+                            completed: item.completed,
+                            featured: item.featured,
+                            tags: item.tags ?? "",
+                          })
+                        }
+                        onDelete={() => setDeleteId(item.id)}
+                      />
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+          );
+        })}
+      </div>
     </AppLayout>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Menu } from "@mantine/core";
 import { BsThreeDots } from "react-icons/bs";
 
@@ -34,6 +34,17 @@ export default function Task({
     onToggle?.(next);
   }
 
+  const content = useMemo(() => {
+    return (
+      description
+        .replace(/&nbsp;/g, " ")
+        .replace(/<|>|h[1-9]|p|\//g, "____")
+        .split("____")
+        .filter(Boolean)
+        .shift() ?? ""
+    );
+  }, [description]);
+
   return (
     <div className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 bg-white shadow-sm">
       <input
@@ -48,7 +59,7 @@ export default function Task({
         >
           {name}
         </p>
-        <p className="text-sm text-gray-500 mt-0.5">{description}</p>
+        <p className="text-sm text-gray-500 mt-0.5 truncate">{content}</p>
       </div>
       <div className="flex flex-col items-end gap-1 shrink-0">
         {createdAt && (

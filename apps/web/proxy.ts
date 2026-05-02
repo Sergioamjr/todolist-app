@@ -11,15 +11,12 @@ export function proxy(request: NextRequest) {
     request.cookies.get("__Secure-better-auth.session_token");
 
   const isLoginPage = request.nextUrl.pathname === "/login";
-  console.log("token", { token, isLoginPage });
 
   if (!token && !isLoginPage) {
-    console.log("sending to login");
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   if (token && isLoginPage) {
-    console.log("sending to home");
     return NextResponse.redirect(new URL("/", request.url));
   }
 
