@@ -39,8 +39,6 @@ export class LibsqlItemRepository implements IItemRepository {
     const conditions = ["item.userId = ?"];
     const args: InValue[] = [userId];
 
-    console.log("findAll>>>", { args });
-
     if (filters.completed !== undefined) {
       conditions.push("item.completed = ?");
       args.push(filters.completed ? 1 : 0);
@@ -59,7 +57,9 @@ export class LibsqlItemRepository implements IItemRepository {
     }
     if (filters.createdAt !== undefined) {
       const dateStr = filters.createdAt.substring(0, 10);
-      conditions.push("item.createdAt >= ? AND item.createdAt < date(?, '+1 day')")
+      conditions.push(
+        "item.createdAt >= ? AND item.createdAt < date(?, '+1 day')",
+      );
       args.push(dateStr, dateStr);
     }
     if (filters.createdAtFrom !== undefined) {
@@ -71,7 +71,6 @@ export class LibsqlItemRepository implements IItemRepository {
       args.push(filters.createdAtTo);
     }
 
-    console.log("args", args);
     const result = await db.execute({
       sql: `SELECT * FROM item WHERE ${conditions.join(" AND ")} ORDER BY createdAt DESC`,
       args,
