@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Text, Button as MantineButton, Group, Select } from "@mantine/core";
+import { Text, Button as MantineButton, Group } from "@mantine/core";
 import { AnimatePresence, motion } from "motion/react";
 import { useQueryClient } from "@tanstack/react-query";
 import AppLayout from "@/components/AppLayout";
